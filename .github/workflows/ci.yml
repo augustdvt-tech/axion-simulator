@@ -1,0 +1,126 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  # ── Fast suite ────────────────────────────────────────────────────────────
+  # Runs on every push and PR. Skips LSTM training and NSGA-II (marked slow).
+  # Target: < 60s wall-clock after the pip cache is warm.
+  fast:
+    name: Fast tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run fast test suite
+        run: make test
+
+      - name: Upload coverage report
+        if: matrix.python-version == '3.11' && github.event_name == 'push'
+        run: |
+          pip install pytest-cov --quiet
+          pytest tests/unit/ -q \
+            --cov=. \
+            --cov-report=xml:coverage.xml \
+            --cov-report=term-missing \
+            2>&1 | tail -20
+
+      - name: Upload coverage artifact
+        if: matrix.python-version == '3.11' && github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+          retention-days: 14
+
+  # ── Slow suite ────────────────────────────────────────────────────────────
+  # Runs only on push to main/master (not PRs). Trains LSTM + NSGA-II.
+  # Requires TensorFlow — skipped gracefully if TF is unavailable.
+  slow:
+    name: Slow tests — LSTM + NSGA-II
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run full test suite (including slow)
+        run: make test-slow
+
+  # ── E2E suite (Bloque X) ─────────────────────────────────────────────────
+  # Spawns a real uvicorn subprocess and drives it via httpx + websockets.
+  # Includes a TimescaleDB service container so DB-backed endpoints get
+  # exercised against a real Postgres. Browser tests are NOT run here —
+  # they're opt-in locally with `make test-e2e-browser`.
+  e2e:
+    name: E2E tests — live server + TimescaleDB
+    runs-on: ubuntu-latest
+
+    services:
+      timescaledb:
+        image: timescale/timescaledb:latest-pg16
+        env:
+          POSTGRES_USER:     axion
+          POSTGRES_PASSWORD: axion
+          POSTGRES_DB:       axion
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U axion -d axion"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    env:
+      AXION_DB_URL: postgresql://axion:axion@localhost:5432/axion
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install websockets
+
+      - name: Apply DB migrations
+        run: python -m alembic -c db/alembic.ini upgrade head
+
+      - name: Run E2E tests
+        run: pytest tests/e2e/ -m e2e -v --tb=short

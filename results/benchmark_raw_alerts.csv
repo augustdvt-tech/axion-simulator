@@ -1,0 +1,9 @@
+scenario,total_alerts,shewhart,ewma,pca_t2,pca_spe,trend,regime
+normal,427,26,223,7,4,7,160
+thermal_drift,5518,1519,2473,184,349,24,969
+feed_perturbation,1356,363,595,59,69,22,248
+reactor_instability,754,121,322,101,13,7,190
+quality_degradation,6887,1821,2854,428,487,12,1285
+energy_waste,1434,381,595,62,111,13,272
+product_grade_change,1353,354,559,81,80,6,273
+sensor_failure,458,33,229,16,7,8,165

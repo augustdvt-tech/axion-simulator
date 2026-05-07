@@ -1,0 +1,9 @@
+scenario,total_sessions,total_recs,n_critical,n_high,n_medium,n_low,expected_rules,rules_detected,ttfr_minutes
+normal,266,6,0,0,6,0,—,"R02_FeedComposition, R06_PurityDeviation",—
+thermal_drift,1264,33,5,0,25,3,R01_ThermalDrift,"R01_ThermalDrift, R02_FeedComposition, R04_ColumnEfficiencyLoss, R06_PurityDeviation",R01_ThermalDrift:548
+feed_perturbation,385,8,1,2,5,0,"R02_FeedComposition, R06_PurityDeviation","R01_ThermalDrift, R02_FeedComposition, R06_PurityDeviation",R02_FeedComposition:0; R06_PurityDeviation:-151
+reactor_instability,302,21,0,0,21,0,R03_ControllerOscillation,"R03_ControllerOscillation, R06_PurityDeviation",R03_ControllerOscillation:32
+quality_degradation,1668,8,0,0,8,0,"R04_ColumnEfficiencyLoss, R06_PurityDeviation","R02_FeedComposition, R06_PurityDeviation",R06_PurityDeviation:94
+energy_waste,382,21,0,0,0,21,R05_ExcessReflux,"R05_ExcessReflux, R08_ProductTransition",R05_ExcessReflux:-216
+product_grade_change,385,16,0,0,2,14,R08_ProductTransition,"R02_FeedComposition, R06_PurityDeviation, R08_ProductTransition",R08_ProductTransition:0
+sensor_failure,298,12,0,4,8,0,R07_SensorFault,"R02_FeedComposition, R06_PurityDeviation, R07_SensorFault",R07_SensorFault:20

@@ -1,0 +1,376 @@
+id,recommendation_id,timestamp,operator_id,status,justification,action_type,target_variable,proposed_value,mode,scenario
+DEC-AE2562F7,REC-E2528AF6,2026-04-01 09:29:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,normal
+DEC-7E4F7A64,REC-41A90530,2026-04-01 12:42:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,normal
+DEC-BB7896F2,REC-0B0714B1,2026-04-01 16:17:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,advisor,normal
+DEC-1473A6E2,REC-7F0AEFED,2026-04-01 19:18:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,normal
+DEC-E952EEDB,REC-135C0715,2026-04-01 22:28:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,advisor,normal
+DEC-9435D430,REC-E99976E5,2026-04-01 23:36:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,normal
+DEC-2C08E3AD,REC-0584605A,2026-04-01 05:28:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.9,advisor,thermal_drift
+DEC-4A040F02,REC-BF3507C1,2026-04-01 09:08:00,operator_sim,accepted,Approved by operator,adjust_setpoint,cstr.F_cool,0.34826756464321074,advisor,thermal_drift
+DEC-F5EAFCBA,REC-DE935C55,2026-04-01 09:20:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,thermal_drift
+DEC-7E88E8F2,REC-C6F37F80,2026-04-01 09:52:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,advisor,thermal_drift
+DEC-65AB0AF6,REC-4B35E07A,2026-04-01 10:49:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,advisor,thermal_drift
+DEC-6553B313,REC-0B076B0E,2026-04-01 12:19:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,thermal_drift
+DEC-366F79F4,REC-38D30B36,2026-04-01 14:25:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,thermal_drift
+DEC-A030F034,REC-3CD64352,2026-04-01 16:10:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,thermal_drift
+DEC-008CE59D,REC-CFD4300A,2026-04-01 17:12:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,advisor,thermal_drift
+DEC-7AA3F737,REC-B75EBA8E,2026-04-01 18:09:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,thermal_drift
+DEC-CE93D959,REC-44B1A38C,2026-04-01 18:33:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,thermal_drift
+DEC-2FA86D1B,REC-1F84106F,2026-04-01 19:18:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,advisor,thermal_drift
+DEC-0F680413,REC-5B08A8C7,2026-04-01 19:20:00,operator_sim,modified,Approved with smaller adjustment (dampened to 70% of suggested).,adjust_setpoint,cstr.F_cool,0.3362831502215221,advisor,thermal_drift
+DEC-F7EBD3D8,REC-4D56AF56,2026-04-01 19:44:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,thermal_drift
+DEC-86C1A93B,REC-895AB6DE,2026-04-01 21:24:00,operator_sim,accepted,Approved by operator,adjust_setpoint,cstr.F_cool,0.3399050763315793,advisor,thermal_drift
+DEC-4834BD20,REC-33F7877C,2026-04-01 22:11:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,thermal_drift
+DEC-3571AE10,REC-BFE96382,2026-04-01 22:56:00,operator_sim,accepted,Approved by operator,adjust_setpoint,cstr.F_cool,0.35085035241974044,advisor,thermal_drift
+DEC-BCCA863D,REC-C497AB7B,2026-04-01 23:14:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,thermal_drift
+DEC-4F86FF0C,REC-521F50AD,2026-04-01 23:34:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,advisor,thermal_drift
+DEC-F548DF58,REC-C3D1E90B,2026-04-02 00:38:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,thermal_drift
+DEC-2D68D199,REC-D6DE504C,2026-04-02 02:30:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,thermal_drift
+DEC-73F6D8D5,REC-89147C67,2026-04-02 03:08:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,advisor,thermal_drift
+DEC-D0454FBC,REC-B301F130,2026-04-02 03:38:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,thermal_drift
+DEC-E57924E2,REC-42A24AAD,2026-04-02 05:18:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,advisor,thermal_drift
+DEC-6912DD68,REC-9312FA4E,2026-04-02 05:21:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,thermal_drift
+DEC-C9ED0690,REC-DF435C0F,2026-04-02 07:57:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,thermal_drift
+DEC-8D3D8201,REC-6747FE85,2026-04-02 08:17:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,thermal_drift
+DEC-39A89547,REC-CB5D9819,2026-04-02 09:39:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,advisor,thermal_drift
+DEC-FA7F3E93,REC-623D9060,2026-04-02 10:40:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,advisor,thermal_drift
+DEC-D1B89109,REC-797E341A,2026-04-02 13:57:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,advisor,thermal_drift
+DEC-F326ECB4,REC-10AC0189,2026-04-02 19:41:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,advisor,thermal_drift
+DEC-089B02A6,REC-DFDD2A71,2026-04-02 21:23:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,advisor,thermal_drift
+DEC-5224E98B,REC-C6427B24,2026-04-02 22:49:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,advisor,thermal_drift
+DEC-C4300F52,REC-CB7F9324,2026-04-01 09:29:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,feed_perturbation
+DEC-70174B9D,REC-D9441E11,2026-04-01 12:00:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,feed_perturbation
+DEC-A2D46B4F,REC-03FD9762,2026-04-01 12:09:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,feed_perturbation
+DEC-A726BD27,REC-966202F7,2026-04-01 12:37:00,operator_sim,accepted,Approved by operator,adjust_setpoint,cstr.F_cool,0.343792658900834,advisor,feed_perturbation
+DEC-55C2B306,REC-226766D8,2026-04-01 13:03:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,advisor,feed_perturbation
+DEC-5EBC13B3,REC-5CBB1D29,2026-04-01 13:37:00,operator_sim,accepted,Approved by operator,adjust_setpoint,cstr.F_cool,0.34503276417326356,advisor,feed_perturbation
+DEC-F2577DA2,REC-F44218E3,2026-04-01 14:23:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,advisor,feed_perturbation
+DEC-03715D26,REC-A302E19E,2026-04-01 14:40:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,advisor,feed_perturbation
+DEC-DDE12F22,REC-6AF74EBE,2026-04-01 06:32:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,reactor_instability
+DEC-5F277B5F,REC-3E39B449,2026-04-01 07:34:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,reactor_instability
+DEC-53E34978,REC-970BB82C,2026-04-01 08:36:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,reactor_instability
+DEC-FB3CA716,REC-AAAFEDE7,2026-04-01 09:29:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,reactor_instability
+DEC-7EDEE1FA,REC-E3A55F2C,2026-04-01 09:38:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,reactor_instability
+DEC-01BF9AE3,REC-DDE36626,2026-04-01 10:42:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,reactor_instability
+DEC-700AA517,REC-044297D3,2026-04-01 11:44:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,reactor_instability
+DEC-AEB24D50,REC-4C658A5E,2026-04-01 12:43:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,advisor,reactor_instability
+DEC-6CB2CA40,REC-5F003DB8,2026-04-01 12:46:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,reactor_instability
+DEC-DE27CDF2,REC-DF69CBBC,2026-04-01 13:48:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,reactor_instability
+DEC-DC3ED282,REC-7B717635,2026-04-01 14:51:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,reactor_instability
+DEC-21135B96,REC-919B4C37,2026-04-01 15:53:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,reactor_instability
+DEC-E587D93B,REC-39EFC530,2026-04-01 16:17:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,reactor_instability
+DEC-3887157A,REC-CD003D00,2026-04-01 16:55:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,reactor_instability
+DEC-24A3E6FC,REC-EA2A1B6C,2026-04-01 17:57:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,reactor_instability
+DEC-7F8CFF2B,REC-AFB2584D,2026-04-01 19:02:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,advisor,reactor_instability
+DEC-9CC2126F,REC-DD83F248,2026-04-01 20:04:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,reactor_instability
+DEC-2860AD45,REC-E424DFB3,2026-04-01 21:06:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,reactor_instability
+DEC-64D40B18,REC-26A83B4E,2026-04-01 22:08:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,reactor_instability
+DEC-1794CE37,REC-B1572B6E,2026-04-01 22:28:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,reactor_instability
+DEC-27AEF8D7,REC-96CD94F4,2026-04-01 23:12:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,reactor_instability
+DEC-D1DAC656,REC-022227D7,2026-04-01 01:34:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,quality_degradation
+DEC-74138930,REC-54434569,2026-04-01 06:10:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,quality_degradation
+DEC-A47ECC8A,REC-0C87490E,2026-04-01 07:14:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,quality_degradation
+DEC-2F67E5E8,REC-7AC0A92A,2026-04-01 09:04:00,operator_sim,modified,Approved with smaller adjustment (dampened to 70% of suggested).,adjust_setpoint,column.RR,5.675,advisor,quality_degradation
+DEC-3800A08F,REC-4D9F1454,2026-04-01 10:06:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,quality_degradation
+DEC-CD09EFD7,REC-67200477,2026-04-01 14:50:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,advisor,quality_degradation
+DEC-D3BF5717,REC-E52EB844,2026-04-01 15:56:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,advisor,quality_degradation
+DEC-491C2FC8,REC-C419E022,2026-04-01 20:06:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,advisor,quality_degradation
+DEC-37EA70D7,REC-D07A9EDD,2026-04-01 00:24:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.2,advisor,energy_waste
+DEC-8349F136,REC-E7671924,2026-04-01 04:00:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,energy_waste
+DEC-B3FE2CDE,REC-A601469D,2026-04-01 05:02:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,energy_waste
+DEC-FCFA89AD,REC-8F1C9B45,2026-04-01 06:04:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,advisor,energy_waste
+DEC-7B9D9D5D,REC-3374408B,2026-04-01 07:06:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,advisor,energy_waste
+DEC-BE762294,REC-C42AEE5E,2026-04-01 08:08:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,energy_waste
+DEC-322883E7,REC-59F4EFC0,2026-04-01 09:10:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,advisor,energy_waste
+DEC-0F8EA4FB,REC-942476FA,2026-04-01 10:12:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,advisor,energy_waste
+DEC-C8E08C98,REC-0D8376F1,2026-04-01 11:14:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,energy_waste
+DEC-559DDC33,REC-67B15C04,2026-04-01 12:16:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,energy_waste
+DEC-AEF756E6,REC-467B386C,2026-04-01 13:18:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,energy_waste
+DEC-3400C863,REC-BCE5E24D,2026-04-01 14:20:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,energy_waste
+DEC-F55DB756,REC-F5AA2E07,2026-04-01 15:22:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,advisor,energy_waste
+DEC-02E957A1,REC-49DF7F19,2026-04-01 16:24:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,advisor,energy_waste
+DEC-45CF376B,REC-08F66739,2026-04-01 17:26:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,energy_waste
+DEC-CFC8E981,REC-6377DA46,2026-04-01 18:28:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,advisor,energy_waste
+DEC-F0837369,REC-81E50D47,2026-04-01 19:30:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,advisor,energy_waste
+DEC-B7FE11BB,REC-3C6FAC85,2026-04-01 20:32:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,energy_waste
+DEC-969365CB,REC-C82F94C3,2026-04-01 21:34:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,energy_waste
+DEC-45495C18,REC-D0F8C6FA,2026-04-01 22:36:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,energy_waste
+DEC-693FF906,REC-033EA888,2026-04-01 23:38:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,energy_waste
+DEC-5FC641BB,REC-AD2AB8B8,2026-04-01 09:29:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,product_grade_change
+DEC-349C5E19,REC-53B1C9A6,2026-04-01 09:52:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,product_grade_change
+DEC-98D803CB,REC-154A7B2C,2026-04-01 10:00:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,product_grade_change
+DEC-2787CBB6,REC-F81F671C,2026-04-01 11:02:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,product_grade_change
+DEC-0DFB02E0,REC-B6690476,2026-04-01 12:04:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,advisor,product_grade_change
+DEC-20D89CE5,REC-2D6363B0,2026-04-01 13:06:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,advisor,product_grade_change
+DEC-5664DDDF,REC-D2B5D342,2026-04-01 14:08:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,product_grade_change
+DEC-A462B846,REC-1C670684,2026-04-01 15:10:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,product_grade_change
+DEC-8E729AEE,REC-857E32D9,2026-04-01 16:12:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,advisor,product_grade_change
+DEC-8A49EC85,REC-D3296BE2,2026-04-01 17:14:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,product_grade_change
+DEC-4898866F,REC-C53B42DD,2026-04-01 18:16:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,product_grade_change
+DEC-714A10EB,REC-9309D2D8,2026-04-01 19:18:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,product_grade_change
+DEC-DEBE2EF0,REC-4A9A98A3,2026-04-01 20:20:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,product_grade_change
+DEC-C94143E9,REC-C1F2D323,2026-04-01 21:22:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,product_grade_change
+DEC-74FB053E,REC-BC647936,2026-04-01 22:24:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,advisor,product_grade_change
+DEC-B2A50327,REC-A5940DB5,2026-04-01 23:26:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,advisor,product_grade_change
+DEC-1C91C45B,REC-7A6AD749,2026-04-01 08:20:00,operator_sim,accepted,Approved by operator,verify_instrument,,,advisor,sensor_failure
+DEC-0BB075D1,REC-0332B156,2026-04-01 09:22:00,operator_sim,accepted,Approved by operator,verify_instrument,,,advisor,sensor_failure
+DEC-AADD66DD,REC-E65F12FD,2026-04-01 09:30:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,sensor_failure
+DEC-643D1015,REC-7F7C39E8,2026-04-01 10:24:00,operator_sim,accepted,Approved by operator,verify_instrument,,,advisor,sensor_failure
+DEC-5D94A71A,REC-DE501FA6,2026-04-01 11:26:00,operator_sim,accepted,Approved by operator,verify_instrument,,,advisor,sensor_failure
+DEC-2F49F8E5,REC-8FE01171,2026-04-01 12:21:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,sensor_failure
+DEC-28CC5438,REC-8796A7BE,2026-04-01 15:56:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,sensor_failure
+DEC-F4F257A8,REC-EF688AFF,2026-04-01 16:23:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,sensor_failure
+DEC-9FA8EA62,REC-B7A92A3F,2026-04-01 17:57:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,sensor_failure
+DEC-D0371398,REC-9AF2375D,2026-04-01 21:50:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,sensor_failure
+DEC-507BED3B,REC-0C3E3D15,2026-04-01 22:18:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,advisor,sensor_failure
+DEC-1B43EB4F,REC-B402D387,2026-04-01 23:23:00,operator_sim,accepted,Approved by operator,investigate,,,advisor,sensor_failure
+DEC-FF9C557F,REC-D148D8BD,2026-04-01 09:29:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,normal
+DEC-15F3F984,REC-6916A445,2026-04-01 12:42:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,normal
+DEC-8A3BBF62,REC-1DE1FAFF,2026-04-01 16:17:00,operator_sim,modified,Approved with smaller adjustment (dampened to 70% of suggested).,adjust_setpoint,column.RR,5.675,semi_autonomous,normal
+DEC-6AD09AFB,REC-C54C7582,2026-04-01 19:18:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,normal
+DEC-D51363C4,REC-77AEAF2B,2026-04-01 22:28:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,normal
+DEC-78F7B40A,REC-AEE44910,2026-04-01 23:36:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,normal
+DEC-86DE2F88,REC-A1F507A5,2026-04-01 05:28:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,thermal_drift
+DEC-383E5291,REC-3CC09316,2026-04-01 09:08:00,operator_sim,accepted,Approved by operator,adjust_setpoint,cstr.F_cool,0.34826756464321074,semi_autonomous,thermal_drift
+DEC-85D11D90,REC-FCE3EE21,2026-04-01 09:20:00,operator_sim,modified,Approved with smaller adjustment (dampened to 70% of suggested).,adjust_setpoint,column.RR,5.675,semi_autonomous,thermal_drift
+DEC-19ABF200,REC-A8C42057,2026-04-01 09:52:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,thermal_drift
+DEC-1414B9A6,REC-B0344812,2026-04-01 10:49:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,thermal_drift
+DEC-DAE225ED,REC-356188F0,2026-04-01 12:19:00,operator_sim,modified,Approved with smaller adjustment (dampened to 70% of suggested).,adjust_setpoint,column.RR,5.675,semi_autonomous,thermal_drift
+DEC-76A735C9,REC-C7801100,2026-04-01 14:25:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,thermal_drift
+DEC-3BE26E17,REC-75B288AD,2026-04-01 16:10:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,thermal_drift
+DEC-26B6D8B6,REC-19C7CC05,2026-04-01 17:12:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,semi_autonomous,thermal_drift
+DEC-ADD65B03,REC-1069E8FC,2026-04-01 18:09:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,thermal_drift
+DEC-67429301,REC-19E32538,2026-04-01 18:33:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,semi_autonomous,thermal_drift
+DEC-B8923D0F,REC-C4D80347,2026-04-01 19:18:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,thermal_drift
+DEC-AC51943D,REC-FD158B80,2026-04-01 19:20:00,operator_sim,accepted,Approved by operator,adjust_setpoint,cstr.F_cool,0.34997793914457054,semi_autonomous,thermal_drift
+DEC-4C7E94E8,REC-009C1929,2026-04-01 19:44:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,semi_autonomous,thermal_drift
+DEC-AB524B93,REC-214E033B,2026-04-01 21:24:00,operator_sim,modified,Approved with smaller adjustment (dampened to 70% of suggested).,adjust_setpoint,cstr.F_cool,0.3266044429099088,semi_autonomous,thermal_drift
+DEC-83EB1CF3,REC-FAB6093C,2026-04-01 22:11:00,operator_sim,modified,Approved with smaller adjustment (dampened to 70% of suggested).,adjust_setpoint,column.RR,5.675,semi_autonomous,thermal_drift
+DEC-C3EB3F0E,REC-27A1496D,2026-04-01 22:56:00,operator_sim,modified,Approved with smaller adjustment (dampened to 70% of suggested).,adjust_setpoint,cstr.F_cool,0.3371214255859245,semi_autonomous,thermal_drift
+DEC-CF5EDD59,REC-A3B59CA1,2026-04-01 23:14:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,thermal_drift
+DEC-05C7E9A7,REC-95CD8EE1,2026-04-01 23:34:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,thermal_drift
+DEC-1742C32F,REC-149A08FC,2026-04-02 00:38:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,thermal_drift
+DEC-84622DEA,REC-C88175B5,2026-04-02 02:30:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,thermal_drift
+DEC-33BEF613,REC-DB3CFA21,2026-04-02 03:08:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,semi_autonomous,thermal_drift
+DEC-9365F0A5,REC-FC693664,2026-04-02 03:38:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,thermal_drift
+DEC-6DD653C7,REC-D35AD668,2026-04-02 05:18:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,semi_autonomous,thermal_drift
+DEC-7B5B6555,REC-5078263E,2026-04-02 05:21:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,thermal_drift
+DEC-46C04ED0,REC-2D0A0773,2026-04-02 07:57:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,thermal_drift
+DEC-8F61B079,REC-26C8CD55,2026-04-02 08:17:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,thermal_drift
+DEC-0DE5F3C3,REC-3E64B3AE,2026-04-02 09:39:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,semi_autonomous,thermal_drift
+DEC-C999C0DA,REC-36C65CB4,2026-04-02 10:40:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,semi_autonomous,thermal_drift
+DEC-E159D032,REC-83A395FC,2026-04-02 13:57:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,semi_autonomous,thermal_drift
+DEC-68B5A417,REC-841211E6,2026-04-02 19:41:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,semi_autonomous,thermal_drift
+DEC-9031D616,REC-1C45B593,2026-04-02 21:23:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,semi_autonomous,thermal_drift
+DEC-2E4D5E2E,REC-61BE72A4,2026-04-02 22:49:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,semi_autonomous,thermal_drift
+DEC-64843AA0,REC-459E4C54,2026-04-01 09:29:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,feed_perturbation
+DEC-714362FD,REC-47FD0D6F,2026-04-01 12:00:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,feed_perturbation
+DEC-CD53D451,REC-80EFAB98,2026-04-01 12:09:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,feed_perturbation
+DEC-EE5FA61A,REC-C882C2CA,2026-04-01 12:37:00,operator_sim,accepted,Approved by operator,adjust_setpoint,cstr.F_cool,0.343792658900834,semi_autonomous,feed_perturbation
+DEC-11AABF3C,REC-95ABEC09,2026-04-01 13:03:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,semi_autonomous,feed_perturbation
+DEC-302C0C27,REC-0156EC0E,2026-04-01 13:37:00,operator_sim,accepted,Approved by operator,adjust_setpoint,cstr.F_cool,0.34503276417326356,semi_autonomous,feed_perturbation
+DEC-42D19D17,REC-6DD2CB86,2026-04-01 14:23:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,semi_autonomous,feed_perturbation
+DEC-64380F88,REC-8CD6DB0C,2026-04-01 14:40:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,semi_autonomous,feed_perturbation
+DEC-9948E661,REC-2E0A5861,2026-04-01 06:32:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,reactor_instability
+DEC-60E4F32F,REC-68EBF1B8,2026-04-01 07:34:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,semi_autonomous,reactor_instability
+DEC-1DB9F408,REC-E5103A9A,2026-04-01 08:36:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,reactor_instability
+DEC-2C4BE423,REC-9FB5212F,2026-04-01 09:29:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,reactor_instability
+DEC-102D8B5E,REC-21BC66E8,2026-04-01 09:38:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,reactor_instability
+DEC-41D223AA,REC-48FE4137,2026-04-01 10:42:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,semi_autonomous,reactor_instability
+DEC-84FCF33B,REC-946E81CA,2026-04-01 11:44:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,semi_autonomous,reactor_instability
+DEC-86FE0336,REC-6780DE9B,2026-04-01 12:43:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,reactor_instability
+DEC-39462B53,REC-989F3334,2026-04-01 12:46:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,reactor_instability
+DEC-49637701,REC-38D2C26F,2026-04-01 13:48:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,reactor_instability
+DEC-F583A0EB,REC-C628EC23,2026-04-01 14:51:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,reactor_instability
+DEC-5CD43A78,REC-B677268A,2026-04-01 15:53:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,reactor_instability
+DEC-0B201EEA,REC-9A42B403,2026-04-01 16:17:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,semi_autonomous,reactor_instability
+DEC-0290E616,REC-240E07D1,2026-04-01 16:55:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,semi_autonomous,reactor_instability
+DEC-83F768AA,REC-37C33976,2026-04-01 17:57:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,reactor_instability
+DEC-3DBADF41,REC-C1176B50,2026-04-01 19:02:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,reactor_instability
+DEC-E127EF95,REC-52C014E2,2026-04-01 20:04:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,reactor_instability
+DEC-B33E5F23,REC-7A930DF1,2026-04-01 21:06:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,reactor_instability
+DEC-4540C4B4,REC-ADE5C24E,2026-04-01 22:08:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,reactor_instability
+DEC-7D1BE75E,REC-07B671BC,2026-04-01 22:28:00,operator_sim,modified,Approved with smaller adjustment (dampened to 70% of suggested).,adjust_setpoint,column.RR,5.675,semi_autonomous,reactor_instability
+DEC-A28995E2,REC-CD704A5D,2026-04-01 23:12:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,reactor_instability
+DEC-8DCBFA8E,REC-AC6AB847,2026-04-01 01:34:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,quality_degradation
+DEC-851A7723,REC-9D857B9B,2026-04-01 06:10:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,semi_autonomous,quality_degradation
+DEC-0EE9D8B0,REC-FFC43E31,2026-04-01 07:14:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,quality_degradation
+DEC-B8B97DC8,REC-7FE36099,2026-04-01 09:04:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,quality_degradation
+DEC-4CDC105C,REC-93B3E615,2026-04-01 10:06:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,quality_degradation
+DEC-A324F358,REC-A725DC2C,2026-04-01 14:50:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,semi_autonomous,quality_degradation
+DEC-000A7A83,REC-4934FB33,2026-04-01 15:56:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,semi_autonomous,quality_degradation
+DEC-AC8ED598,REC-E874452C,2026-04-01 20:06:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,semi_autonomous,quality_degradation
+DEC-C3DBAA37,REC-14D0D478,2026-04-01 00:24:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.2,semi_autonomous,energy_waste
+DEC-ECD233F4,REC-FDA345A3,2026-04-01 04:00:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,energy_waste
+DEC-C54FD5D7,REC-D853705A,2026-04-01 05:02:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,semi_autonomous,energy_waste
+DEC-CD271D9B,REC-001DD0A0,2026-04-01 06:04:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,semi_autonomous,energy_waste
+DEC-794E9A3E,REC-688CA187,2026-04-01 07:06:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,energy_waste
+DEC-0F09BD41,REC-063EA9BA,2026-04-01 08:08:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,energy_waste
+DEC-B7A1A240,REC-04671EFB,2026-04-01 09:10:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,semi_autonomous,energy_waste
+DEC-57E6163C,REC-704F965C,2026-04-01 10:12:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,energy_waste
+DEC-E9B852EF,REC-65CBDAD2,2026-04-01 11:14:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,semi_autonomous,energy_waste
+DEC-F361DE70,REC-5EE453A6,2026-04-01 12:16:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,semi_autonomous,energy_waste
+DEC-9D1895D4,REC-AB150D4F,2026-04-01 13:18:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,semi_autonomous,energy_waste
+DEC-5A528099,REC-EBF7E8BC,2026-04-01 14:20:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,semi_autonomous,energy_waste
+DEC-80F4EE40,REC-1770146C,2026-04-01 15:22:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,semi_autonomous,energy_waste
+DEC-C5A23402,REC-F3F09114,2026-04-01 16:24:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,semi_autonomous,energy_waste
+DEC-F6BCBD39,REC-B2BAB956,2026-04-01 17:26:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,semi_autonomous,energy_waste
+DEC-D9AACFAD,REC-4BA4522D,2026-04-01 18:28:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,energy_waste
+DEC-3702A465,REC-D956C380,2026-04-01 19:30:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,semi_autonomous,energy_waste
+DEC-11289419,REC-F1D6E028,2026-04-01 20:32:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,semi_autonomous,energy_waste
+DEC-CBF33CF4,REC-FCFFC045,2026-04-01 21:34:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,energy_waste
+DEC-16192311,REC-B48FA975,2026-04-01 22:36:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,energy_waste
+DEC-945D0CC5,REC-BE08AB73,2026-04-01 23:38:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,semi_autonomous,energy_waste
+DEC-C0AFC304,REC-9B3456DB,2026-04-01 09:29:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,product_grade_change
+DEC-8D4F4D1D,REC-73FFDD39,2026-04-01 09:52:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,product_grade_change
+DEC-F03FA7E9,REC-38957198,2026-04-01 10:00:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,product_grade_change
+DEC-939DFEC1,REC-839E973A,2026-04-01 11:02:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,semi_autonomous,product_grade_change
+DEC-120B52E8,REC-38A51E39,2026-04-01 12:04:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,semi_autonomous,product_grade_change
+DEC-25B4B7FD,REC-D7F57FA4,2026-04-01 13:06:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,product_grade_change
+DEC-4C6459A8,REC-95120F93,2026-04-01 14:08:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,product_grade_change
+DEC-E6A5429D,REC-33C7769F,2026-04-01 15:10:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,product_grade_change
+DEC-61924328,REC-9594ABCB,2026-04-01 16:12:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,product_grade_change
+DEC-7DB014E3,REC-180C5552,2026-04-01 17:14:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,product_grade_change
+DEC-E928750B,REC-A3D24037,2026-04-01 18:16:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,product_grade_change
+DEC-FEC48D19,REC-6E0407C2,2026-04-01 19:18:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,product_grade_change
+DEC-980A104B,REC-A8EB2249,2026-04-01 20:20:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,product_grade_change
+DEC-D1FF7CD2,REC-F40D4D42,2026-04-01 21:22:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,product_grade_change
+DEC-037576D4,REC-D92E12D9,2026-04-01 22:24:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,semi_autonomous,product_grade_change
+DEC-52562978,REC-496FCC5A,2026-04-01 23:26:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,semi_autonomous,product_grade_change
+DEC-B602A287,REC-B2753713,2026-04-01 08:20:00,operator_sim,accepted,Approved by operator,verify_instrument,,,semi_autonomous,sensor_failure
+DEC-1397EF20,REC-D4B0CC56,2026-04-01 09:22:00,operator_sim,accepted,Approved by operator,verify_instrument,,,semi_autonomous,sensor_failure
+DEC-40D2993D,REC-B76866DE,2026-04-01 09:30:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,sensor_failure
+DEC-B0A3C97B,REC-62674D88,2026-04-01 10:24:00,operator_sim,accepted,Approved by operator,verify_instrument,,,semi_autonomous,sensor_failure
+DEC-6D468FB2,REC-45A3029F,2026-04-01 11:26:00,operator_sim,accepted,Approved by operator,verify_instrument,,,semi_autonomous,sensor_failure
+DEC-001CD593,REC-5664D983,2026-04-01 12:21:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,sensor_failure
+DEC-A26C03D1,REC-FBF4A378,2026-04-01 15:56:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,sensor_failure
+DEC-7A3B835B,REC-8762E9F6,2026-04-01 16:23:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,semi_autonomous,sensor_failure
+DEC-8375D39E,REC-078B41A5,2026-04-01 17:57:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,sensor_failure
+DEC-15034669,REC-CBDF6963,2026-04-01 21:50:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,sensor_failure
+DEC-34D4F1B5,REC-C5E52D7C,2026-04-01 22:18:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,semi_autonomous,sensor_failure
+DEC-1F2DADDC,REC-C23B5593,2026-04-01 23:23:00,operator_sim,accepted,Approved by operator,investigate,,,semi_autonomous,sensor_failure
+DEC-5B6E1654,REC-4C02F1D9,2026-04-01 09:29:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,normal
+DEC-1A54D84F,REC-84D401E2,2026-04-01 12:42:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,normal
+DEC-AE3F577E,REC-83B3A4C8,2026-04-01 16:17:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,autonomous_supervised,normal
+DEC-BF8AE519,REC-7A34A235,2026-04-01 19:18:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,normal
+DEC-83533D08,REC-AB6CC525,2026-04-01 22:28:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,normal
+DEC-449F009E,REC-9B4B3A0A,2026-04-01 23:36:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,normal
+DEC-5153EE7E,REC-04D0B509,2026-04-01 05:28:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.9,autonomous_supervised,thermal_drift
+DEC-8EB66DF7,REC-3F72054C,2026-04-01 09:08:00,operator_sim,accepted,Approved by operator,adjust_setpoint,cstr.F_cool,0.34826756464321074,autonomous_supervised,thermal_drift
+DEC-88613E29,REC-3B6917CF,2026-04-01 09:20:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,thermal_drift
+DEC-3F960518,REC-C7AD8668,2026-04-01 09:52:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,thermal_drift
+DEC-9988A3FC,REC-549D7EBC,2026-04-01 10:49:00,operator_sim,modified,Approved with smaller adjustment (dampened to 70% of suggested).,adjust_setpoint,column.RR,5.675,autonomous_supervised,thermal_drift
+DEC-E3FB30F9,REC-A96A3F67,2026-04-01 12:19:00,operator_sim,modified,Approved with smaller adjustment (dampened to 70% of suggested).,adjust_setpoint,column.RR,5.675,autonomous_supervised,thermal_drift
+DEC-4AC1DD86,REC-D593E29E,2026-04-01 14:25:00,operator_sim,modified,Approved with smaller adjustment (dampened to 70% of suggested).,adjust_setpoint,column.RR,5.675,autonomous_supervised,thermal_drift
+DEC-7E851399,REC-3ADD3281,2026-04-01 16:10:00,operator_sim,modified,Approved with smaller adjustment (dampened to 70% of suggested).,adjust_setpoint,column.RR,5.675,autonomous_supervised,thermal_drift
+DEC-A2B7BB2C,REC-B4C344EB,2026-04-01 17:12:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,autonomous_supervised,thermal_drift
+DEC-97CE5084,REC-AF330C9E,2026-04-01 18:09:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,thermal_drift
+DEC-620D6EC0,REC-19C9990C,2026-04-01 18:33:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,autonomous_supervised,thermal_drift
+DEC-B08A9E3E,REC-766C569C,2026-04-01 19:18:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,autonomous_supervised,thermal_drift
+DEC-6D218F04,REC-EC98FDEF,2026-04-01 19:20:00,operator_sim,modified,Approved with smaller adjustment (dampened to 70% of suggested).,adjust_setpoint,cstr.F_cool,0.3362831502215221,autonomous_supervised,thermal_drift
+DEC-078ABEDD,REC-6EEF5CC4,2026-04-01 19:44:00,operator_sim,modified,Approved with smaller adjustment (dampened to 70% of suggested).,adjust_setpoint,column.RR,5.675,autonomous_supervised,thermal_drift
+DEC-75259B98,REC-EF17CA8E,2026-04-01 21:24:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,thermal_drift
+DEC-F741B940,REC-B9004B48,2026-04-01 22:11:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,thermal_drift
+DEC-0D2845C0,REC-7EFF0914,2026-04-01 22:56:00,operator_sim,accepted,Approved by operator,adjust_setpoint,cstr.F_cool,0.35085035241974044,autonomous_supervised,thermal_drift
+DEC-25B7E669,REC-6A4788DB,2026-04-01 23:14:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,thermal_drift
+DEC-8F945C40,REC-A20F0DBA,2026-04-01 23:34:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,thermal_drift
+DEC-B771A0EE,REC-175B134A,2026-04-02 00:38:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,thermal_drift
+DEC-922B302A,REC-F030CA56,2026-04-02 02:30:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,thermal_drift
+DEC-A8F800A9,REC-2CC67500,2026-04-02 03:08:00,operator_sim,modified,Approved with smaller adjustment (dampened to 70% of suggested).,adjust_setpoint,column.RR,5.71,autonomous_supervised,thermal_drift
+DEC-259DC96E,REC-33E76CF2,2026-04-02 03:38:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,thermal_drift
+DEC-E7B0DF17,REC-42C40796,2026-04-02 05:18:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,autonomous_supervised,thermal_drift
+DEC-58392B4B,REC-76499B8C,2026-04-02 05:21:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,thermal_drift
+DEC-0B3D55C8,REC-D5437C63,2026-04-02 07:57:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,thermal_drift
+DEC-F398B781,REC-62251BE5,2026-04-02 08:17:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,thermal_drift
+DEC-49CA6A2D,REC-538EDC5A,2026-04-02 09:39:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,autonomous_supervised,thermal_drift
+DEC-39D94DF1,REC-35576F1F,2026-04-02 10:40:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,autonomous_supervised,thermal_drift
+DEC-68FC877D,REC-808194D4,2026-04-02 13:57:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,autonomous_supervised,thermal_drift
+DEC-4CB05745,REC-51F64A3C,2026-04-02 19:41:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,autonomous_supervised,thermal_drift
+DEC-625A98FC,REC-6BDEA1E4,2026-04-02 21:23:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,autonomous_supervised,thermal_drift
+DEC-86B34B73,REC-58625323,2026-04-02 22:49:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,autonomous_supervised,thermal_drift
+DEC-A9B0CA7F,REC-51114A94,2026-04-01 09:29:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,feed_perturbation
+DEC-A05C54D2,REC-79452416,2026-04-01 12:00:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,feed_perturbation
+DEC-76F4B95C,REC-CEF10734,2026-04-01 12:09:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,autonomous_supervised,feed_perturbation
+DEC-E5970003,REC-0D5DCE3D,2026-04-01 12:37:00,operator_sim,accepted,Approved by operator,adjust_setpoint,cstr.F_cool,0.343792658900834,autonomous_supervised,feed_perturbation
+DEC-EDE54BDE,REC-633EB5E8,2026-04-01 13:03:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,autonomous_supervised,feed_perturbation
+DEC-6872DDCD,REC-9681050A,2026-04-01 13:37:00,operator_sim,accepted,Approved by operator,adjust_setpoint,cstr.F_cool,0.34503276417326356,autonomous_supervised,feed_perturbation
+DEC-0DB25656,REC-1B3BA17B,2026-04-01 14:23:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,autonomous_supervised,feed_perturbation
+DEC-48E751BC,REC-B01A8C96,2026-04-01 14:40:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,autonomous_supervised,feed_perturbation
+DEC-94F1A843,REC-D97AB2BF,2026-04-01 06:32:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,reactor_instability
+DEC-8419F188,REC-8D6123D5,2026-04-01 07:34:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,autonomous_supervised,reactor_instability
+DEC-9239B225,REC-A0E62C80,2026-04-01 08:36:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,autonomous_supervised,reactor_instability
+DEC-1294AF68,REC-A90E1548,2026-04-01 09:29:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,autonomous_supervised,reactor_instability
+DEC-F9A5A3EA,REC-99C57A7E,2026-04-01 09:38:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,reactor_instability
+DEC-C67AF7AE,REC-5CDEEA23,2026-04-01 10:42:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,reactor_instability
+DEC-1D974974,REC-87B2FF9A,2026-04-01 11:44:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,reactor_instability
+DEC-72CD69A6,REC-AC05CA2E,2026-04-01 12:43:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,reactor_instability
+DEC-9118DFD3,REC-E8471305,2026-04-01 12:46:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,reactor_instability
+DEC-93A7B2A9,REC-53B433F7,2026-04-01 13:48:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,reactor_instability
+DEC-FF851E95,REC-5A9F3F7E,2026-04-01 14:51:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,reactor_instability
+DEC-2F8736DA,REC-63043935,2026-04-01 15:53:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,reactor_instability
+DEC-774683C6,REC-F8892880,2026-04-01 16:17:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,reactor_instability
+DEC-4BC5ECAC,REC-EA673104,2026-04-01 16:55:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,reactor_instability
+DEC-D8A80CC4,REC-1A1ECF94,2026-04-01 17:57:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,autonomous_supervised,reactor_instability
+DEC-265DB65F,REC-45B525C0,2026-04-01 19:02:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,reactor_instability
+DEC-DC70056D,REC-B0E6B609,2026-04-01 20:04:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,autonomous_supervised,reactor_instability
+DEC-3159BDE7,REC-F05522DE,2026-04-01 21:06:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,reactor_instability
+DEC-69F725B9,REC-6248C006,2026-04-01 22:08:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,reactor_instability
+DEC-038FD93F,REC-26653086,2026-04-01 22:28:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,reactor_instability
+DEC-6D67F6B5,REC-8191264C,2026-04-01 23:12:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,autonomous_supervised,reactor_instability
+DEC-18987780,REC-DCC4D00D,2026-04-01 01:34:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,quality_degradation
+DEC-F88B26FA,REC-CBB38188,2026-04-01 06:10:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,quality_degradation
+DEC-A6B3121A,REC-C296F90A,2026-04-01 07:14:00,operator_sim,modified,Approved with smaller adjustment (dampened to 70% of suggested).,adjust_setpoint,column.RR,5.675,autonomous_supervised,quality_degradation
+DEC-69035897,REC-50C7CADA,2026-04-01 09:04:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,quality_degradation
+DEC-96CE01FC,REC-79381A78,2026-04-01 10:06:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,quality_degradation
+DEC-3A356185,REC-C30CB441,2026-04-01 14:50:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,autonomous_supervised,quality_degradation
+DEC-57D8D3D2,REC-B5FBD0C9,2026-04-01 15:56:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.8,autonomous_supervised,quality_degradation
+DEC-56A5A6A5,REC-C282D4AA,2026-04-01 20:06:00,operator_sim,rejected,Rejected — operator disagrees with diagnosis or proposed action,,,,autonomous_supervised,quality_degradation
+DEC-442B4D09,REC-4DFDFCF6,2026-04-01 00:24:00,system_autonomous,auto_executed,Auto-executed (within autonomy rules),adjust_setpoint,column.RR,5.2,autonomous_supervised,energy_waste
+DEC-C1F84CE9,REC-83513602,2026-04-01 04:00:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,autonomous_supervised,energy_waste
+DEC-D9E9E3E5,REC-96F7B3DC,2026-04-01 05:02:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,autonomous_supervised,energy_waste
+DEC-ED6DFC0D,REC-1D3328B3,2026-04-01 06:04:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,autonomous_supervised,energy_waste
+DEC-4A46307E,REC-7CE08053,2026-04-01 07:06:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,energy_waste
+DEC-6DB6811F,REC-BB744BD0,2026-04-01 08:08:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,autonomous_supervised,energy_waste
+DEC-C74EECCE,REC-D5A6F905,2026-04-01 09:10:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,energy_waste
+DEC-D9BBF6C3,REC-919B65F4,2026-04-01 10:12:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,energy_waste
+DEC-3523DDA8,REC-782922B4,2026-04-01 11:14:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,energy_waste
+DEC-325DBD7A,REC-E1FD14D7,2026-04-01 12:16:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,energy_waste
+DEC-56D57795,REC-80E7741E,2026-04-01 13:18:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,autonomous_supervised,energy_waste
+DEC-839B6AB5,REC-DCE132F9,2026-04-01 14:20:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,autonomous_supervised,energy_waste
+DEC-A837EF99,REC-8F9E66F2,2026-04-01 15:22:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,energy_waste
+DEC-04F24FD9,REC-E74EAE51,2026-04-01 16:24:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,energy_waste
+DEC-C5E7217A,REC-23860EDC,2026-04-01 17:26:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,autonomous_supervised,energy_waste
+DEC-807C7949,REC-9093CB08,2026-04-01 18:28:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,energy_waste
+DEC-FAD3037A,REC-8004D6C9,2026-04-01 19:30:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,autonomous_supervised,energy_waste
+DEC-ABE22DF6,REC-A27D7068,2026-04-01 20:32:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,energy_waste
+DEC-F4BBF9CE,REC-CCBF5EA9,2026-04-01 21:34:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,energy_waste
+DEC-4DC5C945,REC-451FFA73,2026-04-01 22:36:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,energy_waste
+DEC-0EB3B3C4,REC-722BF9DB,2026-04-01 23:38:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,energy_waste
+DEC-C9E84DE6,REC-CF35E01E,2026-04-01 09:29:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,product_grade_change
+DEC-0D186DBE,REC-9C5F3241,2026-04-01 09:52:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,product_grade_change
+DEC-8F57614D,REC-ED2DEB64,2026-04-01 10:00:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,autonomous_supervised,product_grade_change
+DEC-CDE1F1B8,REC-4A1025DC,2026-04-01 11:02:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,product_grade_change
+DEC-162A932F,REC-C7225617,2026-04-01 12:04:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,product_grade_change
+DEC-CD414730,REC-6BB4867E,2026-04-01 13:06:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,product_grade_change
+DEC-F7D6172D,REC-9350C015,2026-04-01 14:08:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,product_grade_change
+DEC-8ACAC9B0,REC-A3326C84,2026-04-01 15:10:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,product_grade_change
+DEC-119D04DD,REC-31F24C57,2026-04-01 16:12:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,product_grade_change
+DEC-21F55773,REC-4F655F66,2026-04-01 17:14:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,autonomous_supervised,product_grade_change
+DEC-D5686AA5,REC-D434EF03,2026-04-01 18:16:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,product_grade_change
+DEC-DB691B05,REC-6DB69255,2026-04-01 19:18:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,product_grade_change
+DEC-8B4BB327,REC-898D85A8,2026-04-01 20:20:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,autonomous_supervised,product_grade_change
+DEC-C7693A29,REC-7447DC37,2026-04-01 21:22:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,autonomous_supervised,product_grade_change
+DEC-26657076,REC-A3F46EB0,2026-04-01 22:24:00,operator_sim,accepted,Approved by operator,wait_and_monitor,,,autonomous_supervised,product_grade_change
+DEC-8A25011A,REC-8670CD4D,2026-04-01 23:26:00,operator_sim,rejected,"Deferred — low priority, no immediate action warranted",,,,autonomous_supervised,product_grade_change
+DEC-06E8D3D5,REC-A6503B22,2026-04-01 08:20:00,operator_sim,accepted,Approved by operator,verify_instrument,,,autonomous_supervised,sensor_failure
+DEC-D7F4E0FC,REC-C29DA833,2026-04-01 09:22:00,operator_sim,accepted,Approved by operator,verify_instrument,,,autonomous_supervised,sensor_failure
+DEC-B43BAFCA,REC-F4D2496E,2026-04-01 09:30:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,sensor_failure
+DEC-530C926C,REC-38B7323F,2026-04-01 10:24:00,operator_sim,accepted,Approved by operator,verify_instrument,,,autonomous_supervised,sensor_failure
+DEC-7CEE6A3B,REC-11878A8D,2026-04-01 11:26:00,operator_sim,accepted,Approved by operator,verify_instrument,,,autonomous_supervised,sensor_failure
+DEC-F19F38A4,REC-E16C4476,2026-04-01 12:21:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,sensor_failure
+DEC-FF9509D7,REC-4C421809,2026-04-01 15:56:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,sensor_failure
+DEC-EB8E408F,REC-E7F4BCCA,2026-04-01 16:23:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,sensor_failure
+DEC-D399461D,REC-8FE19603,2026-04-01 17:57:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,sensor_failure
+DEC-4B6C2D53,REC-6A2149F4,2026-04-01 21:50:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,sensor_failure
+DEC-0DB94FA2,REC-3DFFDDD7,2026-04-01 22:18:00,operator_sim,accepted,Approved by operator,adjust_setpoint,column.RR,5.75,autonomous_supervised,sensor_failure
+DEC-9B91D1D4,REC-F885C9CA,2026-04-01 23:23:00,operator_sim,accepted,Approved by operator,investigate,,,autonomous_supervised,sensor_failure

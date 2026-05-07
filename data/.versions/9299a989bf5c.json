@@ -1,0 +1,115 @@
+{
+  "snapshot_id": "9299a989bf5c",
+  "created_at": "2026-05-05T17:50:55+00:00",
+  "message": "initial baseline",
+  "files": [
+    {
+      "name": "batch_normal.csv",
+      "sha256": "05e7b8425c59434549a015f7d655d056f9840da4a5827ef2529fa69f5bdaaba0",
+      "size_bytes": 33929,
+      "n_rows": 241,
+      "n_cols": 9,
+      "modified_at": "2026-05-03T15:49:31+00:00",
+      "relpath": "batch_normal.csv"
+    },
+    {
+      "name": "batch_runaway.csv",
+      "sha256": "2cb1e54a7d42d91889b35c0ca2f7f0cc393e9d7d7cbdb22e44dd4708d8216e72",
+      "size_bytes": 34141,
+      "n_rows": 241,
+      "n_cols": 9,
+      "modified_at": "2026-05-03T15:49:31+00:00",
+      "relpath": "batch_runaway.csv"
+    },
+    {
+      "name": "batch_slow_kinetics.csv",
+      "sha256": "9928b3aed0b6b1e803fb8f6900cdd1c3f74b76707ee87b5cd1b93e346ed407e9",
+      "size_bytes": 33950,
+      "n_rows": 241,
+      "n_cols": 9,
+      "modified_at": "2026-05-03T15:49:31+00:00",
+      "relpath": "batch_slow_kinetics.csv"
+    },
+    {
+      "name": "custom_run.csv",
+      "sha256": "d8920199faf58b454eaf993af75a71cd9ff64260d7dc1036317ca7aadb74a04d",
+      "size_bytes": 530556,
+      "n_rows": 1440,
+      "n_cols": 21,
+      "modified_at": "2026-04-17T22:41:29+00:00",
+      "relpath": "custom_run.csv"
+    },
+    {
+      "name": "energy_waste.csv",
+      "sha256": "1c1ec977088957e4b3bdd16c6dc9df71aac35c7ca926d1e223262d557df09e80",
+      "size_bytes": 531145,
+      "n_rows": 1440,
+      "n_cols": 21,
+      "modified_at": "2026-04-17T13:45:21+00:00",
+      "relpath": "energy_waste.csv"
+    },
+    {
+      "name": "feed_perturbation.csv",
+      "sha256": "d8d0b534b7b0f623c49b4b64c73c3544e2265384c54de7503ec46df74af58af5",
+      "size_bytes": 530710,
+      "n_rows": 1440,
+      "n_cols": 21,
+      "modified_at": "2026-04-17T13:45:10+00:00",
+      "relpath": "feed_perturbation.csv"
+    },
+    {
+      "name": "normal.csv",
+      "sha256": "829f3c9ccf965c11087e7b1f03f29636eefb25fff30af5f0be8fd4440f896efb",
+      "size_bytes": 531335,
+      "n_rows": 1440,
+      "n_cols": 21,
+      "modified_at": "2026-04-17T13:45:03+00:00",
+      "relpath": "normal.csv"
+    },
+    {
+      "name": "product_grade_change.csv",
+      "sha256": "952fd8f699868930f38457ff2ee79e2d450635a4175332e4b5da2efbc141243e",
+      "size_bytes": 529660,
+      "n_rows": 1440,
+      "n_cols": 21,
+      "modified_at": "2026-04-17T13:45:23+00:00",
+      "relpath": "product_grade_change.csv"
+    },
+    {
+      "name": "quality_degradation.csv",
+      "sha256": "bf0fae275a25dc564335bb689d3befd00bbe9d6c903e5f87c06cca3a1d11420a",
+      "size_bytes": 2121558,
+      "n_rows": 5760,
+      "n_cols": 21,
+      "modified_at": "2026-04-17T13:45:19+00:00",
+      "relpath": "quality_degradation.csv"
+    },
+    {
+      "name": "reactor_instability.csv",
+      "sha256": "9d38f113dff3d9714b5d13d75269c18bcbb3f9cf2a1bdb0970939d3d3c41f488",
+      "size_bytes": 531550,
+      "n_rows": 1440,
+      "n_cols": 21,
+      "modified_at": "2026-04-17T13:45:13+00:00",
+      "relpath": "reactor_instability.csv"
+    },
+    {
+      "name": "sensor_failure.csv",
+      "sha256": "3c89a5281ab29e1ca6d671163f8b409180daa7b62ede02189c00f97d2884cec6",
+      "size_bytes": 531469,
+      "n_rows": 1440,
+      "n_cols": 21,
+      "modified_at": "2026-04-17T13:45:25+00:00",
+      "relpath": "sensor_failure.csv"
+    },
+    {
+      "name": "thermal_drift.csv",
+      "sha256": "8815ffb485898e2b364b5e20ff38586029327fa1ed3f35c6634e2690374f1528",
+      "size_bytes": 1596286,
+      "n_rows": 4320,
+      "n_cols": 21,
+      "modified_at": "2026-04-17T13:45:08+00:00",
+      "relpath": "thermal_drift.csv"
+    }
+  ]
+}

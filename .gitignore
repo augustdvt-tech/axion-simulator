@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+.Python
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+results/coverage_html/
+
+# Secrets — NEVER commit. .env.example IS tracked.
+.env
+*.env
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+
+# MLflow local store
+mlruns/
+
+# Trained model artifacts — too big, regenerable from `make retrain`
+results/models/*.joblib
+results/models/lstm_forecaster/

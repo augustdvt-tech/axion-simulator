@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 *)",
+      "Bash(make test *)",
+      "Bash(make clean *)",
+      "Bash(chmod +x /Users/augustodelvillar/Documents/axion_simulator/scripts/smoke_test.sh)",
+      "Bash(bash -n /Users/augustodelvillar/Documents/axion_simulator/scripts/smoke_test.sh)",
+      "Read(//Library/Frameworks/Python.framework/Versions/**)",
+      "Bash(pip3 show *)",
+      "Bash(pip show *)",
+      "Bash(bash *)",
+      "Bash(pip3 install *)",
+      "Bash(make -n demo)",
+      "Bash(python *)",
+      "Bash(gh auth *)",
+      "Bash(git init *)",
+      "Bash(xargs -I{} echo \"{} files to commit\")",
+      "Bash(git add *)",
+      "Bash(xargs -I{} echo \"{} files staged\")",
+      "Bash(xargs -I{} echo \"{} files tracked\")"
+    ]
+  }
+}

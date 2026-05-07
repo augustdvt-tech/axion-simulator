@@ -1,0 +1,2057 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AXION AI · Operator Console</title>
+
+<!-- Fonts: distinctive monospace + a refined display sans -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" />
+
+<!-- Tailwind Play CDN (runtime compiler) - local vendor copy -->
+<script src="/static/vendor/tailwind.js"></script>
+
+<!-- React 18 + Babel for JSX in-browser -->
+<script crossorigin src="/static/vendor/react.js"></script>
+<script crossorigin src="/static/vendor/react-dom.js"></script>
+<script src="/static/vendor/prop-types.js"></script>
+<script src="/static/vendor/babel.js"></script>
+<!-- Recharts for time-series charts -->
+<script src="/static/vendor/recharts.js"></script>
+
+<style>
+  :root {
+    /* Industrial command-center palette */
+    --bg-deep:     #07090d;        /* near-black; main background */
+    --bg-panel:    #0d1117;        /* panel background */
+    --bg-elev:    #131a23;         /* elevated card */
+    --bg-elev-2:  #1a2230;
+    --grid:       #1b2331;
+    --border:     #25303f;
+    --border-hi:  #3a4757;
+    --text-hi:    #e6edf3;
+    --text:       #b8c2cc;
+    --text-dim:   #6b7785;
+    --text-mute:  #4b5663;
+    --cyan:       #4dd2ff;          /* primary accent / nominal */
+    --cyan-dim:   #2a8db8;
+    --amber:      #ffb547;          /* attention */
+    --amber-dim:  #b87a18;
+    --signal-red: #ff4f5e;          /* critical */
+    --signal-red-dim: #b03340;
+    --green:      #3ddc84;          /* ok / accepted */
+    --green-dim:  #1f7d4d;
+    --magenta:    #c87eff;
+  }
+  html, body, #root { height: 100%; }
+  body {
+    margin: 0;
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    background: var(--bg-deep);
+    color: var(--text);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+  .display { font-family: "Space Grotesk", sans-serif; letter-spacing: -0.01em; }
+
+  /* Subtle scanline atmosphere — just enough to feel like an instrument */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,0.012) 0,
+      rgba(255,255,255,0.012) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    z-index: 100;
+  }
+
+  /* Vertical hairlines on the panels evoke industrial UI bezels */
+  .bezel-r { box-shadow: inset -1px 0 0 var(--border); }
+  .bezel-l { box-shadow: inset 1px 0 0 var(--border); }
+  .bezel-t { box-shadow: inset 0 1px 0 var(--border); }
+  .bezel-b { box-shadow: inset 0 -1px 0 var(--border); }
+
+  /* Status pulse for live / critical states */
+  @keyframes pulse-cyan {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(77,210,255,0.6); }
+    50%      { box-shadow: 0 0 0 6px rgba(77,210,255,0); }
+  }
+  @keyframes pulse-red {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,79,94,0.7); }
+    50%      { box-shadow: 0 0 0 6px rgba(255,79,94,0); }
+  }
+  .pulse-cyan { animation: pulse-cyan 2s ease-out infinite; }
+  .pulse-red  { animation: pulse-red 1s ease-out infinite; }
+
+  /* Numeric callouts — large, mono, tabular */
+  .num-callout { font-family: "JetBrains Mono", monospace; font-variant-numeric: tabular-nums; font-weight: 500; }
+
+  /* Hide scrollbars but keep scroll */
+  .scroll-clean::-webkit-scrollbar { width: 6px; height: 6px; }
+  .scroll-clean::-webkit-scrollbar-track { background: transparent; }
+  .scroll-clean::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .scroll-clean::-webkit-scrollbar-thumb:hover { background: var(--border-hi); }
+
+  /* Card entrance */
+  @keyframes slide-in-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .anim-in { animation: slide-in-up 0.25s ease-out; }
+
+  /* Subtle grid pattern for value tile backgrounds */
+  .tile-grid {
+    background-image:
+      linear-gradient(rgba(77,210,255,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(77,210,255,0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* Decorative tick marks on chart axes (handled in JS but base styles here) */
+  .recharts-cartesian-axis-tick text { font-family: "JetBrains Mono", monospace; font-size: 10px; }
+</style>
+</head>
+
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef, useMemo, useCallback } = React;
+const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Area, AreaChart } = Recharts;
+
+// ============================================================================
+// API client
+// ============================================================================
+const API = {
+  base: window.location.origin,
+  ws:   `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws/stream`,
+
+  async get(path) {
+    const r = await fetch(`${this.base}${path}`);
+    if (!r.ok) throw new Error(`${path}: ${r.status}`);
+    return r.json();
+  },
+  async post(path, body) {
+    const r = await fetch(`${this.base}${path}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body || {}),
+    });
+    if (!r.ok) throw new Error(`${path}: ${r.status}`);
+    return r.json();
+  },
+};
+
+// ============================================================================
+// Helpers
+// ============================================================================
+const URGENCY_COLOR = {
+  critical: "#ff4f5e",
+  high:     "#ff8b3d",
+  medium:   "#ffb547",
+  low:      "#3ddc84",
+};
+const URGENCY_LABEL = {
+  critical: "CRITICAL",
+  high:     "HIGH",
+  medium:   "MEDIUM",
+  low:      "LOW",
+};
+const STATUS_COLOR = {
+  pending:       "#6b7785",
+  accepted:      "#3ddc84",
+  modified:      "#ffb547",
+  rejected:      "#ff4f5e",
+  auto_executed: "#4dd2ff",
+};
+function formatTs(s) {
+  if (!s) return "—";
+  const d = new Date(s);
+  return d.toLocaleString(undefined, { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" });
+}
+function formatTsFull(s) {
+  if (!s) return "—";
+  const d = new Date(s);
+  return d.toLocaleString(undefined, { hour12: false });
+}
+function formatNum(v, digits=2) {
+  if (v === null || v === undefined || isNaN(v)) return "—";
+  return Number(v).toFixed(digits);
+}
+
+// Operational ranges per tag (for status color)
+const TAG_RANGES = {
+  "cstr.T_R_C":      { nominal: [78, 80], warn: [76, 82], critical: [74, 84] },
+  "cstr.T_J_C":      { nominal: [55, 62], warn: [50, 65], critical: [45, 70] },
+  "cstr.C_A":        { nominal: [140, 175], warn: [120, 200], critical: [100, 250] },
+  "cstr.conversion": { nominal: [0.82, 0.86], warn: [0.78, 0.90], critical: [0.70, 0.95] },
+  "cstr.F_cool":     { nominal: [0.25, 0.36], warn: [0.20, 0.45], critical: [0.10, 0.60] },
+  "cstr.F_feed":     { nominal: [1.85, 2.15], warn: [1.7, 2.3], critical: [1.5, 2.5] },
+  "column.purity_B": { nominal: [98.8, 99.5], warn: [98.5, 99.8], critical: [98.0, 100] },
+  "column.RR":       { nominal: [5.0, 6.0], warn: [4.5, 7.0], critical: [3.5, 8.0] },
+  "column.T_top_C":  { nominal: [68, 73], warn: [65, 76], critical: [60, 80] },
+  "column.T_bot_C":  { nominal: [115, 120], warn: [110, 122], critical: [105, 125] },
+  "column.Q_reb_kW": { nominal: [220, 270], warn: [180, 310], critical: [150, 350] },
+};
+function tagStatus(tag, v) {
+  const r = TAG_RANGES[tag];
+  if (!r || v == null) return "neutral";
+  if (v >= r.nominal[0] && v <= r.nominal[1]) return "ok";
+  if (v >= r.warn[0]    && v <= r.warn[1])    return "warn";
+  return "alarm";
+}
+const STATUS_TEXT_COLOR = {
+  ok:      "var(--cyan)",
+  warn:    "var(--amber)",
+  alarm:   "var(--signal-red)",
+  neutral: "var(--text)",
+};
+
+// ============================================================================
+// Hooks
+// ============================================================================
+function useSWR(path, intervalMs = 5000) {
+  const [data, setData] = useState(null);
+  const [err, setErr]   = useState(null);
+  useEffect(() => {
+    let alive = true;
+    let id;
+    const tick = async () => {
+      try {
+        const d = await API.get(path);
+        if (alive) setData(d);
+      } catch (e) {
+        if (alive) setErr(e);
+      }
+      if (alive) id = setTimeout(tick, intervalMs);
+    };
+    tick();
+    return () => { alive = false; clearTimeout(id); };
+  }, [path, intervalMs]);
+  return [data, err];
+}
+
+function useWebSocket(onMessage) {
+  const wsRef = useRef(null);
+  const [connected, setConnected] = useState(false);
+  useEffect(() => {
+    let closed = false;
+    let retry  = null;
+
+    const connect = () => {
+      const ws = new WebSocket(API.ws);
+      wsRef.current = ws;
+      ws.onopen = () => setConnected(true);
+      ws.onclose = () => {
+        setConnected(false);
+        if (!closed) retry = setTimeout(connect, 1500);
+      };
+      ws.onerror = () => ws.close();
+      ws.onmessage = (e) => {
+        try {
+          const msg = JSON.parse(e.data);
+          onMessage(msg);
+        } catch {}
+      };
+    };
+    connect();
+    return () => {
+      closed = true;
+      clearTimeout(retry);
+      if (wsRef.current) wsRef.current.close();
+    };
+    // eslint-disable-next-line
+  }, []);
+  return { connected };
+}
+
+// ============================================================================
+// Top bar — scenario, replay clock, mode
+// ============================================================================
+function OpcuaBadge() {
+  const [status, setStatus] = useState(null);
+  const [sourceState, setSourceState] = useState(null);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchAll = async () => {
+      try {
+        const [s, ds] = await Promise.all([
+          API.get("/api/integration/opcua/status"),
+          API.get("/api/data-source/status"),
+        ]);
+        if (!cancelled) { setStatus(s); setSourceState(ds); }
+      } catch {}
+    };
+    fetchAll();
+    const id = setInterval(fetchAll, 5000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, []);
+
+  if (!status || !status.enabled) return null;
+
+  const connected = status.connected;
+  const isLive = sourceState?.source === "opcua";
+  const color = connected ? "var(--green)" : "var(--signal-red)";
+  const label = connected
+    ? `OPC-UA · ${status.samples_received || 0}${isLive ? " · LIVE" : ""}`
+    : "OPC-UA · OFFLINE";
+
+  const toggleSource = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const next = isLive ? "replay" : "opcua";
+      await API.post("/api/data-source/select", { source: next });
+      const ds = await API.get("/api/data-source/status");
+      setSourceState(ds);
+    } catch (e) {
+      window.alert(`Could not switch data source: ${e}`);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={toggleSource}
+      disabled={busy}
+      className="mono text-[9px] tracking-widest px-1.5 py-0.5 cursor-pointer"
+      style={{ color, border: `1px solid ${color}`, background: "transparent" }}
+      title={
+        status.last_error
+          ? `Last error: ${status.last_error}`
+          : `Endpoint: ${status.endpoint || "—"} · click to ${isLive ? "go back to replay" : "switch to live"}`
+      }>
+      {label}
+    </button>
+  );
+}
+
+
+function ScenarioUploadButton({ onUploaded }) {
+  const inputRef = useRef(null);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);   // {kind: "ok"|"err", text}
+
+  const onPick = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";   // allow re-picking the same file
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith(".csv")) {
+      setMsg({ kind: "err", text: "File must be .csv" });
+      return;
+    }
+    const name = (window.prompt(
+      "Scenario name (lowercase, digits, underscore — 2–40 chars):",
+      "custom_run",
+    ) || "").trim();
+    if (!name) return;
+
+    setBusy(true);
+    setMsg(null);
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("name", name);
+    fd.append("activate", "true");
+    try {
+      const headers = {};
+      const apiKey = window.__AXION_API_KEY__ || "";
+      if (apiKey) headers["X-API-Key"] = apiKey;
+      const r = await fetch("/api/scenarios/upload", {
+        method: "POST", body: fd, headers,
+      });
+      if (!r.ok) {
+        const body = await r.json().catch(() => ({}));
+        const detail = body.detail;
+        const text = typeof detail === "string"
+          ? detail
+          : (detail?.errors || []).join(" · ") || `HTTP ${r.status}`;
+        setMsg({ kind: "err", text });
+        return;
+      }
+      const body = await r.json();
+      setMsg({ kind: "ok", text: `Loaded ${body.n_rows} rows as '${body.scenario}'` });
+      onUploaded?.(body.scenario);
+    } catch (err) {
+      setMsg({ kind: "err", text: String(err) });
+    } finally {
+      setBusy(false);
+      setTimeout(() => setMsg(null), 6000);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <input
+        ref={inputRef}
+        type="file"
+        accept=".csv,text/csv"
+        onChange={onPick}
+        style={{ display: "none" }}
+      />
+      <button
+        onClick={() => inputRef.current?.click()}
+        disabled={busy}
+        title="Upload a custom scenario CSV"
+        className="mono text-[10px] uppercase tracking-widest border px-2 py-1.5 cursor-pointer"
+        style={{
+          borderColor: "var(--border)",
+          color: busy ? "var(--text-mute)" : "var(--text-hi)",
+          background: "transparent",
+        }}
+      >
+        {busy ? "Uploading…" : "+ Upload CSV"}
+      </button>
+      {msg && (
+        <span className="mono text-[10px]"
+              style={{ color: msg.kind === "ok" ? "var(--green)" : "var(--red)" }}>
+          {msg.text}
+        </span>
+      )}
+    </div>
+  );
+}
+
+
+function TopBar({ replayStatus, scenarios, onScenarioChange, onScenarioUploaded, onReplayControl, connected }) {
+  const ts = replayStatus?.ts;
+  const progress = (replayStatus?.progress || 0) * 100;
+  const speed = replayStatus?.speed || 60;
+
+  return (
+    <header className="bezel-b" style={{ background: "var(--bg-panel)", height: 56 }}>
+      <div className="h-full px-5 flex items-center gap-6">
+
+        {/* Brand */}
+        <div className="flex items-center gap-3">
+          <div className="w-3 h-3 rounded-full pulse-cyan" style={{ background: "var(--cyan)" }} />
+          <div className="display font-bold text-lg tracking-tight" style={{ color: "var(--text-hi)" }}>
+            AXION<span style={{ color: "var(--cyan)" }}> AI</span>
+          </div>
+          <div className="mono text-[10px] uppercase tracking-widest" style={{ color: "var(--text-mute)" }}>
+            Operator Console · v0.5
+          </div>
+        </div>
+
+        <div className="flex-1" />
+
+        {/* Scenario picker */}
+        <div className="flex items-center gap-2">
+          <span className="mono text-[10px] uppercase tracking-widest" style={{ color: "var(--text-mute)" }}>
+            Scenario
+          </span>
+          <select
+            value={replayStatus?.scenario || ""}
+            onChange={(e) => onScenarioChange(e.target.value)}
+            className="mono text-xs bg-transparent border px-3 py-1.5 cursor-pointer"
+            style={{ borderColor: "var(--border)", color: "var(--text-hi)" }}
+          >
+            {(scenarios?.available || []).map(s => (
+              <option key={s} value={s} style={{ background: "var(--bg-panel)" }}>{s}</option>
+            ))}
+          </select>
+          <ScenarioUploadButton onUploaded={onScenarioUploaded} />
+          <OpcuaBadge />
+        </div>
+
+        {/* Replay clock + progress */}
+        <div className="flex items-center gap-3 px-4 border-l border-r"
+             style={{ borderColor: "var(--border)" }}>
+          <div className="flex flex-col">
+            <span className="mono text-[10px] uppercase tracking-widest" style={{ color: "var(--text-mute)" }}>
+              Sim Time
+            </span>
+            <span className="mono text-sm" style={{ color: "var(--text-hi)" }}>
+              {ts ? formatTsFull(ts) : "—"}
+            </span>
+          </div>
+          <div className="w-36 h-1 relative overflow-hidden" style={{ background: "var(--bg-elev)" }}>
+            <div className="absolute inset-y-0 left-0" style={{ width: `${progress}%`, background: "var(--cyan)" }} />
+          </div>
+          <span className="mono text-[10px]" style={{ color: "var(--text-mute)" }}>
+            {progress.toFixed(0)}%
+          </span>
+        </div>
+
+        {/* Replay controls */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onReplayControl({ action: replayStatus?.running ? "pause" : "resume" })}
+            className="mono text-xs px-3 py-1.5 hover:bg-white/5 transition border"
+            style={{ borderColor: "var(--border)", color: "var(--text-hi)" }}
+          >
+            {replayStatus?.running ? "❚❚ PAUSE" : "▶ RESUME"}
+          </button>
+          <button
+            onClick={() => onReplayControl({ action: "restart" })}
+            className="mono text-xs px-3 py-1.5 hover:bg-white/5 transition border"
+            style={{ borderColor: "var(--border)", color: "var(--text)" }}
+          >
+            ⟲ RESTART
+          </button>
+          <select
+            value={speed}
+            onChange={(e) => onReplayControl({ action: "speed", speed: Number(e.target.value) })}
+            className="mono text-xs bg-transparent border px-2 py-1.5 cursor-pointer"
+            style={{ borderColor: "var(--border)", color: "var(--text)" }}
+          >
+            <option value={60}   style={{ background: "var(--bg-panel)" }}>60×</option>
+            <option value={300}  style={{ background: "var(--bg-panel)" }}>300×</option>
+            <option value={600}  style={{ background: "var(--bg-panel)" }}>600×</option>
+            <option value={1800} style={{ background: "var(--bg-panel)" }}>1800×</option>
+          </select>
+        </div>
+
+        {/* Connection indicator */}
+        <div className="flex items-center gap-2 mono text-[10px] uppercase tracking-widest"
+             style={{ color: connected ? "var(--cyan)" : "var(--signal-red)" }}>
+          <div className={`w-1.5 h-1.5 rounded-full ${connected ? "pulse-cyan" : ""}`}
+               style={{ background: "currentColor" }} />
+          {connected ? "LIVE" : "DISCONNECTED"}
+        </div>
+      </div>
+    </header>
+  );
+}
+
+// ============================================================================
+// Process state tile
+// ============================================================================
+function ValueTile({ label, value, units, tag, sub, big = false }) {
+  const status = tag ? tagStatus(tag, value) : "neutral";
+  const color = STATUS_TEXT_COLOR[status];
+  const borderColor = status === "alarm" ? "var(--signal-red-dim)" :
+                      status === "warn"  ? "var(--amber-dim)" :
+                                           "var(--border)";
+  return (
+    <div className="bezel-b bezel-r tile-grid p-4 transition-colors"
+         style={{ background: "var(--bg-elev)", borderColor }}>
+      <div className="flex items-center justify-between">
+        <div className="mono text-[10px] uppercase tracking-widest" style={{ color: "var(--text-mute)" }}>
+          {label}
+        </div>
+        <div className="w-1.5 h-1.5 rounded-full"
+             style={{ background: color, boxShadow: status !== "ok" ? `0 0 8px ${color}` : "none" }} />
+      </div>
+      <div className="flex items-baseline gap-2 mt-2">
+        <div className={`num-callout ${big ? "text-3xl" : "text-2xl"}`} style={{ color: "var(--text-hi)" }}>
+          {value === null || value === undefined ? "—" : formatNum(value, big ? 2 : 2)}
+        </div>
+        <div className="mono text-[10px]" style={{ color: "var(--text-mute)" }}>
+          {units}
+        </div>
+      </div>
+      {sub && (
+        <div className="mono text-[10px] mt-1" style={{ color: "var(--text-dim)" }}>
+          {sub}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================================
+// Process panel (left)
+// ============================================================================
+function ProcessPanel({ liveSample }) {
+  const cstr = liveSample?.cstr || {};
+  const col  = liveSample?.column || {};
+
+  return (
+    <div className="flex flex-col" style={{ background: "var(--bg-panel)" }}>
+      <div className="px-4 py-3 bezel-b flex items-center justify-between">
+        <div>
+          <div className="mono text-[10px] uppercase tracking-widest" style={{ color: "var(--text-mute)" }}>
+            Live Process State
+          </div>
+          <div className="display text-sm font-medium mt-0.5" style={{ color: "var(--text-hi)" }}>
+            CSTR + DESTILACIÓN BINARIA
+          </div>
+        </div>
+        <div className="mono text-[10px]" style={{ color: "var(--cyan)" }}>
+          ▷ {liveSample?.timestamp ? formatTs(liveSample.timestamp) : "—"}
+        </div>
+      </div>
+
+      {/* Reactor section */}
+      <div className="px-4 pt-3">
+        <div className="mono text-[10px] uppercase tracking-widest mb-2" style={{ color: "var(--cyan)" }}>
+          ▸ Reactor CSTR
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-px px-4" style={{ background: "var(--border)" }}>
+        <ValueTile label="T_REACTOR"  value={cstr.T_R_C} units="°C" tag="cstr.T_R_C"
+                   sub="setpoint 79.2"  big />
+        <ValueTile label="T_JACKET"   value={cstr.T_J_C} units="°C" tag="cstr.T_J_C" />
+        <ValueTile label="C_A OUTLET" value={cstr.C_A} units="mol/m³" tag="cstr.C_A"
+                   sub={`conversion ${cstr.conversion ? (cstr.conversion*100).toFixed(1) : "—"}%`} />
+        <ValueTile label="F_COOL"     value={cstr.F_cool} units="m³/h" tag="cstr.F_cool" />
+      </div>
+
+      {/* Column section */}
+      <div className="px-4 pt-4">
+        <div className="mono text-[10px] uppercase tracking-widest mb-2" style={{ color: "var(--cyan)" }}>
+          ▸ Distillation Column
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-px px-4" style={{ background: "var(--border)" }}>
+        <ValueTile label="PURITY B"   value={col.purity_B} units="%" tag="column.purity_B"
+                   sub="spec ≥ 98.5" big />
+        <ValueTile label="REFLUX RR"  value={col.RR} units="" tag="column.RR" />
+        <ValueTile label="T_BOTTOM"   value={col.T_bot_C} units="°C" tag="column.T_bot_C" />
+        <ValueTile label="Q_REBOIL"   value={col.Q_reb_kW} units="kW" tag="column.Q_reb_kW" />
+      </div>
+
+      {/* Soft sensor — AI-estimated purity */}
+      {liveSample?.soft_sensor && (
+        <>
+          <div className="px-4 pt-4">
+            <div className="mono text-[10px] uppercase tracking-widest mb-2" style={{ color: "var(--magenta)" }}>
+              ▸ AI Soft Sensor
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-px px-4" style={{ background: "var(--border)" }}>
+            <SoftSensorTile data={liveSample.soft_sensor} />
+          </div>
+        </>
+      )}
+
+      {/* LSTM Forecaster — multi-horizon predictions */}
+      <ForecastSection />
+
+      <div className="flex-1 px-4 pt-4 pb-4 overflow-hidden">
+        <ProcessChart />
+      </div>
+    </div>
+  );
+}
+
+function ForecastSection() {
+  const [forecast, setForecast] = useState(null);
+  useEffect(() => {
+    let alive = true;
+    let id;
+    const tick = async () => {
+      try {
+        const d = await API.get("/api/predictive/forecast");
+        if (alive) setForecast(d);
+      } catch {}
+      if (alive) id = setTimeout(tick, 4000);
+    };
+    tick();
+    return () => { alive = false; clearTimeout(id); };
+  }, []);
+
+  if (!forecast || !forecast.available) return null;
+  if (forecast.warming_up) {
+    return (
+      <>
+        <div className="px-4 pt-4">
+          <div className="mono text-[10px] uppercase tracking-widest mb-2" style={{ color: "var(--cyan)" }}>
+            ▸ AI Forecast
+          </div>
+        </div>
+        <div className="px-4">
+          <div className="bezel-b p-3 mono text-[10px]"
+               style={{ background: "var(--bg-elev)", color: "var(--text-mute)" }}>
+            Warming up — need {forecast.needs_samples} samples, have {forecast.have_samples}.
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  const purityCurr = forecast.current["column.purity_B"];
+  const purityPts  = forecast.points["column.purity_B"] || {};
+  const trCurr     = forecast.current["cstr.T_R_C"];
+  const trPts      = forecast.points["cstr.T_R_C"]      || {};
+
+  return (
+    <>
+      <div className="px-4 pt-4">
+        <div className="mono text-[10px] uppercase tracking-widest mb-2"
+             style={{ color: "var(--cyan)" }}>
+          ▸ AI Forecast · LSTM
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-px px-4" style={{ background: "var(--border)" }}>
+        <ForecastTile label="PURITY B"  units="%"
+                      current={purityCurr} points={purityPts}
+                      spec={98.5} specDirection="below" />
+        <ForecastTile label="T_REACTOR" units="°C"
+                      current={trCurr} points={trPts}
+                      spec={82.0} specDirection="above" />
+      </div>
+    </>
+  );
+}
+
+function ForecastTile({ label, units, current, points, spec, specDirection }) {
+  // Order horizons ascending
+  const horizons = Object.keys(points).map(Number).sort((a, b) => a - b);
+  // Detect violation
+  const violations = horizons.filter(h => {
+    const v = points[h];
+    return specDirection === "below" ? v < spec : v > spec;
+  });
+  const hasViolation = violations.length > 0;
+  const earliestViolation = hasViolation ? violations[0] : null;
+  const accentColor = hasViolation ? "var(--signal-red)" : "var(--cyan)";
+
+  return (
+    <div className="bezel-b tile-grid p-3"
+         style={{ background: "var(--bg-elev)",
+                  borderLeft: `2px solid ${accentColor}` }}>
+      <div className="flex items-center justify-between">
+        <div className="mono text-[10px] uppercase tracking-widest"
+             style={{ color: "var(--text-mute)" }}>
+          {label}
+        </div>
+        {hasViolation && (
+          <div className="mono text-[9px] tracking-widest"
+               style={{ color: "var(--signal-red)" }}>
+            ⚠ +{earliestViolation}m
+          </div>
+        )}
+      </div>
+      <div className="num-callout text-base mt-1" style={{ color: accentColor }}>
+        {current?.toFixed(2)}
+        <span className="mono text-[9px] ml-1" style={{ color: "var(--text-mute)" }}>{units}</span>
+      </div>
+      <div className="mt-2 grid grid-cols-4 gap-1">
+        {horizons.map(h => {
+          const v = points[h];
+          const violates = specDirection === "below" ? v < spec : v > spec;
+          const delta = v - current;
+          return (
+            <div key={h} className="text-center"
+                 style={{ background: "var(--bg-deep)",
+                          border: violates ? "1px solid var(--signal-red)" : "1px solid var(--border)",
+                          padding: "4px 2px" }}>
+              <div className="mono text-[9px]" style={{ color: "var(--text-mute)" }}>
+                +{h}m
+              </div>
+              <div className="mono text-[10px] font-bold"
+                   style={{ color: violates ? "var(--signal-red)" : "var(--text-hi)" }}>
+                {v?.toFixed(2)}
+              </div>
+              <div className="mono text-[8px]"
+                   style={{ color: delta >= 0 ? "var(--cyan)" : "var(--amber)" }}>
+                {delta >= 0 ? "+" : ""}{delta.toFixed(2)}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function SoftSensorTile({ data }) {
+  const predicted = data?.purity_B_predicted;
+  const measured  = data?.purity_B_measured;
+  const std       = data?.purity_B_std;
+  const residual  = data?.residual;
+  const agreement = data?.agreement;
+  // Agreement color
+  const agreementColor = agreement > 0.95 ? "var(--cyan)" :
+                         agreement > 0.80 ? "var(--amber)" :
+                                            "var(--signal-red)";
+
+  return (
+    <div className="bezel-b tile-grid p-4"
+         style={{ background: "var(--bg-elev)",
+                  borderLeft: "2px solid var(--magenta)" }}>
+      <div className="flex items-center justify-between">
+        <div className="mono text-[10px] uppercase tracking-widest" style={{ color: "var(--text-mute)" }}>
+          PURITY B · PREDICTED
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-1.5 h-1.5 rounded-full"
+               style={{ background: agreementColor,
+                        boxShadow: `0 0 6px ${agreementColor}` }} />
+          <span className="mono text-[9px] tracking-widest" style={{ color: agreementColor }}>
+            AGREE {(agreement*100).toFixed(0)}%
+          </span>
+        </div>
+      </div>
+      <div className="flex items-baseline gap-2 mt-2">
+        <div className="num-callout text-2xl" style={{ color: "var(--magenta)" }}>
+          {formatNum(predicted, 2)}
+        </div>
+        <div className="mono text-[10px]" style={{ color: "var(--text-mute)" }}>
+          %  ±{formatNum(std*2, 3)} (2σ)
+        </div>
+      </div>
+      <div className="flex items-center gap-4 mt-2 mono text-[10px]" style={{ color: "var(--text-dim)" }}>
+        <span>measured {formatNum(measured, 2)}%</span>
+        <span style={{ color: Math.abs(residual) > 0.5 ? "var(--signal-red)" : "var(--text-dim)" }}>
+          Δ = {residual >= 0 ? "+" : ""}{formatNum(residual, 3)}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Time-series chart
+// ============================================================================
+function ProcessChart() {
+  const [data, setData] = useState([]);
+  const [ssData, setSsData] = useState([]);
+  useEffect(() => {
+    let alive = true;
+    let id;
+    const tick = async () => {
+      try {
+        const [proc, ss] = await Promise.all([
+          API.get("/api/process/recent?samples=240"),
+          API.get("/api/soft_sensor/purity?samples=240").catch(() => ({ available: false, data: [] })),
+        ]);
+        if (!alive) return;
+        setData(proc.data.map(row => ({
+          ts: new Date(row.ts).getTime(),
+          T_R: row["cstr.T_R_C"],
+          purity: row["column.purity_B"],
+          Q: row["column.Q_reb_kW"],
+        })));
+        if (ss.available) {
+          setSsData(ss.data.map(row => ({
+            ts:        new Date(row.ts).getTime(),
+            predicted: row.predicted,
+            upper:     row.predicted + 2 * row.std,
+            lower:     row.predicted - 2 * row.std,
+          })));
+        }
+      } catch {}
+      if (alive) id = setTimeout(tick, 2000);
+    };
+    tick();
+    return () => { alive = false; clearTimeout(id); };
+  }, []);
+
+  // Merge by timestamp for dual-source rendering
+  const merged = useMemo(() => {
+    const m = new Map();
+    data.forEach(r => m.set(r.ts, { ...r }));
+    ssData.forEach(r => {
+      const existing = m.get(r.ts) || { ts: r.ts };
+      existing.predicted = r.predicted;
+      existing.upper = r.upper;
+      existing.lower = r.lower;
+      m.set(r.ts, existing);
+    });
+    return Array.from(m.values()).sort((a, b) => a.ts - b.ts);
+  }, [data, ssData]);
+
+  return (
+    <div className="h-full flex flex-col">
+      <div className="flex items-center justify-between mb-2">
+        <div className="mono text-[10px] uppercase tracking-widest" style={{ color: "var(--text-mute)" }}>
+          ▸ Trend · last 4 hours
+        </div>
+        {ssData.length > 0 && (
+          <div className="mono text-[9px] uppercase tracking-widest"
+               style={{ color: "var(--magenta)" }}>
+            ◆ soft sensor overlay
+          </div>
+        )}
+      </div>
+      <div className="flex-1" style={{ background: "var(--bg-deep)", border: "1px solid var(--border)" }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={merged} margin={{ top: 12, right: 38, left: 8, bottom: 4 }}>
+            <CartesianGrid stroke="var(--grid)" strokeDasharray="2 4" />
+            <XAxis
+              dataKey="ts"
+              type="number" domain={["dataMin", "dataMax"]}
+              tick={{ fill: "var(--text-mute)" }} stroke="var(--border-hi)"
+              tickFormatter={(t) => {
+                const d = new Date(t);
+                return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+              }}
+            />
+            <YAxis yAxisId="L" tick={{ fill: "#4dd2ff", fontSize: 10 }} stroke="var(--border-hi)"
+                   width={36} domain={["auto", "auto"]}
+                   tickFormatter={(v) => v.toFixed(1)} />
+            <YAxis yAxisId="R" orientation="right" tick={{ fill: "#ffb547", fontSize: 10 }} stroke="var(--border-hi)"
+                   width={44} domain={[97, 100]}
+                   tickFormatter={(v) => v.toFixed(1)} />
+            <Tooltip
+              contentStyle={{ background: "var(--bg-elev-2)", border: "1px solid var(--border-hi)",
+                              fontSize: 11, fontFamily: "JetBrains Mono", color: "var(--text-hi)" }}
+              labelFormatter={(t) => formatTs(new Date(t).toISOString())}
+            />
+            {/* Soft sensor uncertainty band (behind everything else) */}
+            <Line yAxisId="R" type="monotone" dataKey="upper" name="SS +2σ" dot={false}
+                  stroke="#c87eff" strokeWidth={0.5} strokeDasharray="2 2"
+                  opacity={0.5} isAnimationActive={false} />
+            <Line yAxisId="R" type="monotone" dataKey="lower" name="SS -2σ" dot={false}
+                  stroke="#c87eff" strokeWidth={0.5} strokeDasharray="2 2"
+                  opacity={0.5} isAnimationActive={false} />
+            {/* Soft sensor prediction line */}
+            <Line yAxisId="R" type="monotone" dataKey="predicted" name="Purity (predicted)" dot={false}
+                  stroke="#c87eff" strokeWidth={1.2} isAnimationActive={false} />
+            {/* Main lines */}
+            <Line yAxisId="L" type="monotone" dataKey="T_R"   name="T_R (°C)"   dot={false} stroke="#4dd2ff" strokeWidth={1.5} isAnimationActive={false} />
+            <Line yAxisId="R" type="monotone" dataKey="purity" name="Purity B (%)" dot={false} stroke="#ffb547" strokeWidth={1.5} isAnimationActive={false} />
+            <ReferenceLine yAxisId="R" y={98.5} stroke="#ff4f5e" strokeDasharray="3 3" label={{ value: "spec", fill: "#ff4f5e", fontSize: 9 }} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Recommendation card
+// ============================================================================
+function RecommendationCard({ rec, onDecide, onSelect, selected }) {
+  const color = URGENCY_COLOR[rec.urgency] || "#6b7785";
+  const isPending = !rec.status || rec.status === "pending";
+  const statusColor = STATUS_COLOR[rec.status] || "#6b7785";
+
+  return (
+    <div
+      onClick={() => onSelect(rec)}
+      className={`anim-in cursor-pointer transition-colors`}
+      style={{
+        background: selected?.id === rec.id ? "var(--bg-elev-2)" : "var(--bg-elev)",
+        borderLeft: `3px solid ${color}`,
+        boxShadow: selected?.id === rec.id ? `inset 0 0 0 1px var(--border-hi)` : `inset 0 -1px 0 var(--border)`,
+      }}
+    >
+      <div className="px-4 py-3">
+        <div className="flex items-start gap-3">
+          {/* Urgency tag */}
+          <div className="flex flex-col items-center mt-0.5 min-w-[64px]">
+            <div className="mono text-[9px] tracking-widest font-bold" style={{ color }}>
+              {URGENCY_LABEL[rec.urgency]}
+            </div>
+            <div className="mono text-[9px] mt-0.5" style={{ color: "var(--text-mute)" }}>
+              {formatTs(rec.ts)}
+            </div>
+          </div>
+
+          {/* Body */}
+          <div className="flex-1 min-w-0">
+            <div className="text-[13px] leading-snug" style={{ color: "var(--text-hi)" }}>
+              {rec.diagnosis}
+            </div>
+            <div className="flex items-center gap-3 mt-1.5">
+              <div className="mono text-[9px] uppercase tracking-wider" style={{ color: "var(--cyan-dim)" }}>
+                {rec.rule_fired}
+              </div>
+              <div className="mono text-[9px]" style={{ color: "var(--text-mute)" }}>
+                conf {(rec.confidence*100).toFixed(0)}%
+              </div>
+              <div className="mono text-[9px]" style={{ color: "var(--text-mute)" }}>
+                P{rec.priority_score?.toFixed(0)}
+              </div>
+              <div className="flex-1" />
+              {rec.status && rec.status !== "pending" && (
+                <div className="mono text-[9px] tracking-widest uppercase px-2 py-0.5"
+                     style={{ background: `${statusColor}25`, color: statusColor }}>
+                  {rec.status}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Quick action buttons (only when pending) */}
+        {isPending && (
+          <div className="flex gap-1 mt-3 ml-[76px]">
+            <button
+              onClick={(e) => { e.stopPropagation(); onDecide(rec, "accept"); }}
+              className="mono text-[10px] px-3 py-1 transition"
+              style={{ background: "rgba(61,220,132,0.1)", color: "var(--green)",
+                       border: "1px solid rgba(61,220,132,0.3)" }}
+            >
+              ACCEPT
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); onDecide(rec, "modify"); }}
+              className="mono text-[10px] px-3 py-1 transition"
+              style={{ background: "rgba(255,181,71,0.1)", color: "var(--amber)",
+                       border: "1px solid rgba(255,181,71,0.3)" }}
+            >
+              MODIFY
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); onDecide(rec, "reject"); }}
+              className="mono text-[10px] px-3 py-1 transition"
+              style={{ background: "rgba(255,79,94,0.1)", color: "var(--signal-red)",
+                       border: "1px solid rgba(255,79,94,0.3)" }}
+            >
+              REJECT
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Recommendation detail (right panel)
+// ============================================================================
+function RecommendationDetail({ rec, onDecide }) {
+  if (!rec) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center text-center px-8"
+           style={{ background: "var(--bg-panel)" }}>
+        <div className="mono text-[10px] uppercase tracking-widest" style={{ color: "var(--text-mute)" }}>
+          ▸ Select a recommendation
+        </div>
+        <div className="mt-2 text-sm" style={{ color: "var(--text-dim)" }}>
+          Click any item in the recommendation queue to inspect it here.
+        </div>
+      </div>
+    );
+  }
+
+  const color = URGENCY_COLOR[rec.urgency];
+  const a = rec.action;
+  const isPending = !rec.status || rec.status === "pending";
+
+  return (
+    <div className="h-full flex flex-col scroll-clean overflow-y-auto" style={{ background: "var(--bg-panel)" }}>
+      <div className="px-5 py-4 bezel-b" style={{ borderTop: `2px solid ${color}` }}>
+        <div className="flex items-center gap-3">
+          <div className="mono text-[10px] tracking-widest font-bold px-2 py-1"
+               style={{ background: `${color}1f`, color, border: `1px solid ${color}55` }}>
+            {URGENCY_LABEL[rec.urgency]}
+          </div>
+          <div className="mono text-[10px]" style={{ color: "var(--text-mute)" }}>
+            {rec.id}
+          </div>
+          <div className="flex-1" />
+          <div className="mono text-[10px] tracking-widest"
+               style={{ color: "var(--text-mute)" }}>
+            P{rec.priority_score?.toFixed(0)} · CONF {(rec.confidence*100).toFixed(0)}%
+          </div>
+        </div>
+        <div className="mono text-[10px] mt-1" style={{ color: "var(--text-dim)" }}>
+          {formatTsFull(rec.ts)} · {rec.rule_fired}
+        </div>
+      </div>
+
+      <Section label="Diagnosis">
+        <p className="text-sm leading-relaxed" style={{ color: "var(--text-hi)" }}>{rec.diagnosis}</p>
+      </Section>
+
+      <Section label="Probable Cause">
+        <p className="text-sm leading-relaxed" style={{ color: "var(--text)" }}>{rec.probable_cause}</p>
+      </Section>
+
+      <Section label="Recommended Action">
+        <p className="text-sm leading-relaxed mb-3" style={{ color: "var(--text-hi)" }}>{a.description}</p>
+        {a.target_variable && a.proposed_value !== null && (
+          <div className="flex items-stretch border" style={{ borderColor: "var(--border)" }}>
+            <div className="flex-1 p-3" style={{ background: "var(--bg-elev)" }}>
+              <div className="mono text-[9px] uppercase tracking-widest" style={{ color: "var(--text-mute)" }}>
+                {a.target_variable}
+              </div>
+              <div className="num-callout text-xl mt-1" style={{ color: "var(--text-hi)" }}>
+                {formatNum(a.current_value, 3)} <span className="text-[10px]" style={{ color: "var(--text-mute)" }}>{a.units || ""}</span>
+              </div>
+              <div className="mono text-[9px] mt-0.5" style={{ color: "var(--text-mute)" }}>CURRENT</div>
+            </div>
+            <div className="flex items-center justify-center px-2"
+                 style={{ background: "var(--bg-elev-2)" }}>
+              <span className="mono text-base" style={{ color }}>→</span>
+            </div>
+            <div className="flex-1 p-3" style={{ background: "var(--bg-elev-2)" }}>
+              <div className="mono text-[9px] uppercase tracking-widest" style={{ color }}>
+                PROPOSED
+              </div>
+              <div className="num-callout text-xl mt-1" style={{ color }}>
+                {formatNum(a.proposed_value, 3)} <span className="text-[10px]" style={{ color: "var(--text-mute)" }}>{a.units || ""}</span>
+              </div>
+              <div className="mono text-[9px] mt-0.5" style={{ color: "var(--text-mute)" }}>
+                Δ = {a.adjustment >= 0 ? "+" : ""}{formatNum(a.adjustment, 3)}
+              </div>
+            </div>
+          </div>
+        )}
+      </Section>
+
+      {rec.expected_impact?.length > 0 && (
+        <Section label="Expected Impact">
+          <div className="space-y-2">
+            {rec.expected_impact.map((imp, i) => (
+              <div key={i} className="border p-3" style={{ borderColor: "var(--border)" }}>
+                <div className="flex items-baseline justify-between">
+                  <div className="mono text-[10px] uppercase tracking-widest" style={{ color: "var(--cyan-dim)" }}>
+                    {imp.variable}
+                  </div>
+                  {imp.time_to_effect_minutes && (
+                    <div className="mono text-[9px]" style={{ color: "var(--text-mute)" }}>
+                      ETA ~{imp.time_to_effect_minutes} min
+                    </div>
+                  )}
+                </div>
+                {imp.predicted_value !== null && (
+                  <div className="mono text-sm mt-1" style={{ color: "var(--text-hi)" }}>
+                    {formatNum(imp.current_value, 3)} → <span style={{ color }}>{formatNum(imp.predicted_value, 3)}</span>
+                  </div>
+                )}
+                {imp.description && (
+                  <div className="text-xs mt-1" style={{ color: "var(--text-dim)" }}>{imp.description}</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
+
+      {!isPending && (
+        <Section label="Decision">
+          <div className="border p-3" style={{ borderColor: "var(--border)",
+                                                background: `${STATUS_COLOR[rec.status]}10` }}>
+            <div className="flex items-center gap-2">
+              <span className="mono text-xs uppercase tracking-widest font-bold"
+                    style={{ color: STATUS_COLOR[rec.status] }}>
+                {rec.status}
+              </span>
+              <span className="mono text-[10px]" style={{ color: "var(--text-mute)" }}>
+                by {rec.operator_id || "—"}
+              </span>
+            </div>
+            {rec.justification && (
+              <div className="text-xs mt-2" style={{ color: "var(--text)" }}>
+                "{rec.justification}"
+              </div>
+            )}
+          </div>
+        </Section>
+      )}
+
+      {isPending && (
+        <div className="px-5 py-4 bezel-t mt-auto"
+             style={{ background: "var(--bg-deep)", borderColor: "var(--border-hi)" }}>
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              onClick={() => onDecide(rec, "accept")}
+              className="mono text-xs py-2.5 transition font-bold tracking-wider"
+              style={{ background: "var(--green-dim)", color: "var(--text-hi)",
+                       boxShadow: "0 0 0 1px var(--green)" }}
+            >
+              ACCEPT
+            </button>
+            <button
+              onClick={() => onDecide(rec, "modify")}
+              className="mono text-xs py-2.5 transition font-bold tracking-wider"
+              style={{ background: "var(--amber-dim)", color: "var(--text-hi)",
+                       boxShadow: "0 0 0 1px var(--amber)" }}
+            >
+              MODIFY
+            </button>
+            <button
+              onClick={() => onDecide(rec, "reject")}
+              className="mono text-xs py-2.5 transition font-bold tracking-wider"
+              style={{ background: "var(--signal-red-dim)", color: "var(--text-hi)",
+                       boxShadow: "0 0 0 1px var(--signal-red)" }}
+            >
+              REJECT
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Section({ label, children }) {
+  return (
+    <div className="px-5 py-4 bezel-b" style={{ borderColor: "var(--border)" }}>
+      <div className="mono text-[10px] uppercase tracking-widest mb-2" style={{ color: "var(--cyan)" }}>
+        ▸ {label}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+// ============================================================================
+// Recommendations panel (center)
+// ============================================================================
+function RecommendationsPanel({ recommendations, selected, onSelect, onDecide }) {
+  const counts = useMemo(() => {
+    const c = { critical: 0, high: 0, medium: 0, low: 0, pending: 0 };
+    (recommendations || []).forEach(r => {
+      c[r.urgency] = (c[r.urgency] || 0) + 1;
+      if (!r.status || r.status === "pending") c.pending++;
+    });
+    return c;
+  }, [recommendations]);
+
+  return (
+    <div className="flex flex-col h-full bezel-l bezel-r" style={{ background: "var(--bg-panel)" }}>
+      <div className="px-4 py-3 bezel-b">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="mono text-[10px] uppercase tracking-widest" style={{ color: "var(--text-mute)" }}>
+              Recommendation Queue
+            </div>
+            <div className="display text-sm font-medium mt-0.5" style={{ color: "var(--text-hi)" }}>
+              {recommendations?.length || 0} ACTIVE · {counts.pending} PENDING
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            {Object.entries(URGENCY_LABEL).map(([k, lbl]) => (
+              <div key={k} className="flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full" style={{ background: URGENCY_COLOR[k] }} />
+                <span className="mono text-[10px]" style={{ color: "var(--text-dim)" }}>
+                  {lbl} {counts[k] || 0}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto scroll-clean">
+        {(!recommendations || recommendations.length === 0) ? (
+          <div className="h-full flex flex-col items-center justify-center text-center px-8 py-12">
+            <div className="mono text-[11px] uppercase tracking-widest mb-2" style={{ color: "var(--cyan)" }}>
+              ▸ All systems nominal
+            </div>
+            <div className="text-sm" style={{ color: "var(--text-dim)" }}>
+              No active recommendations. Process variables within normal bands.
+            </div>
+          </div>
+        ) : (
+          recommendations.map(r => (
+            <RecommendationCard
+              key={r.id}
+              rec={r}
+              selected={selected}
+              onSelect={onSelect}
+              onDecide={onDecide}
+            />
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Model & History Panel — model status + DB history
+// ============================================================================
+
+function DriftBadge() {
+  const [drift, setDrift] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchDrift = () => {
+      API.get("/api/drift/status")
+        .then(d => { if (!cancelled) setDrift(d); })
+        .catch(() => { if (!cancelled) setDrift(null); });
+    };
+    fetchDrift();
+    const id = setInterval(fetchDrift, 30000);   // refresh every 30s
+    return () => { cancelled = true; clearInterval(id); };
+  }, []);
+
+  if (!drift || drift.available === false) return null;
+  if (drift.warming_up) {
+    return (
+      <span className="mono text-[9px] tracking-widest px-1.5 py-0.5"
+            style={{ color: "var(--text-mute)", border: "1px solid var(--border)" }}>
+        DRIFT: WARMING UP
+      </span>
+    );
+  }
+  const status = drift.overall_status || "none";
+  const color = status === "significant" ? "var(--red)"
+              : status === "moderate"    ? "var(--amber)"
+              : "var(--green)";
+  const label = status === "significant" ? "DRIFT: SIGNIFICANT"
+              : status === "moderate"    ? "DRIFT: MODERATE"
+              : "IN-DOMAIN";
+  return (
+    <span className="mono text-[9px] tracking-widest px-1.5 py-0.5"
+          style={{ color, border: `1px solid ${color}` }}
+          title={
+            drift.worst_feature
+              ? `Worst feature: ${drift.worst_feature} (PSI=${(drift.max_psi || 0).toFixed(3)})`
+              : "No drift detected"
+          }>
+      {label}
+    </span>
+  );
+}
+
+
+function ModelStatusCard() {
+  const [data, setData] = useState(null);
+  const [err,  setErr]  = useState(false);
+
+  useEffect(() => {
+    API.get("/api/models/status")
+      .then(setData)
+      .catch(() => setErr(true));
+  }, []);
+
+  const StatusBadge = ({ status }) => {
+    const color = status === "trained" ? "var(--green)" : "var(--text-mute)";
+    const label = status === "trained" ? "TRAINED" : "NOT TRAINED";
+    return (
+      <span className="mono text-[9px] tracking-widest px-1.5 py-0.5"
+            style={{ color, border: `1px solid ${color}`, opacity: 0.9 }}>
+        {label}
+      </span>
+    );
+  };
+
+  const MetricRow = ({ label, value, units = "" }) => (
+    <div className="flex justify-between items-baseline py-0.5">
+      <span className="mono text-[9px]" style={{ color: "var(--text-dim)" }}>{label}</span>
+      <span className="mono text-[11px]" style={{ color: "var(--text-hi)" }}>
+        {typeof value === "number" ? value.toFixed(4) : value}
+        {units && <span style={{ color: "var(--text-dim)" }}> {units}</span>}
+      </span>
+    </div>
+  );
+
+  if (err) return (
+    <div className="mono text-[9px] px-4 py-3" style={{ color: "var(--text-mute)" }}>
+      ⚠ Could not load model status
+    </div>
+  );
+  if (!data) return (
+    <div className="mono text-[9px] px-4 py-3" style={{ color: "var(--text-mute)" }}>
+      Loading...
+    </div>
+  );
+
+  const ss   = data.soft_sensor   || {};
+  const lstm = data.lstm_forecaster || {};
+  const m    = ss.metrics || {};
+
+  return (
+    <div className="px-4 pt-3 pb-4">
+      {/* Soft Sensor */}
+      <div className="mb-3">
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="mono text-[10px] tracking-widest" style={{ color: "var(--cyan)" }}>
+            PURITY SOFT SENSOR
+          </span>
+          <div className="flex items-center gap-1.5">
+            <DriftBadge />
+            <StatusBadge status={ss.status} />
+          </div>
+        </div>
+        {ss.trained_at && (
+          <div className="mono text-[9px] mb-1.5" style={{ color: "var(--text-mute)" }}>
+            trained {ss.trained_at ? ss.trained_at.slice(0, 10) : "—"}
+          </div>
+        )}
+        {m.mae_holdout != null && (
+          <div className="border rounded px-2 py-1" style={{ borderColor: "var(--border)" }}>
+            <MetricRow label="MAE holdout" value={m.mae_holdout} />
+            <MetricRow label="MAE overall" value={m.mae_overall} />
+            <MetricRow label="R² train"    value={m.r2_train} />
+            <MetricRow label="Samples"     value={m.n_samples} />
+          </div>
+        )}
+        {ss.status === "trained" && !m.mae_holdout && (
+          <div className="mono text-[9px]" style={{ color: "var(--text-mute)" }}>
+            No metrics file — run <span style={{ color: "var(--amber)" }}>make retrain</span>
+          </div>
+        )}
+        {ss.status === "not_trained" && (
+          <div className="mono text-[9px]" style={{ color: "var(--text-mute)" }}>
+            Run <span style={{ color: "var(--amber)" }}>make train-soft-sensor</span>
+          </div>
+        )}
+      </div>
+
+      {/* LSTM */}
+      <div className="pt-2" style={{ borderTop: "1px solid var(--border)" }}>
+        <div className="flex items-center justify-between mb-1">
+          <span className="mono text-[10px] tracking-widest" style={{ color: "var(--magenta)" }}>
+            LSTM FORECASTER
+          </span>
+          <StatusBadge status={lstm.status} />
+        </div>
+        {lstm.trained_at && (
+          <div className="mono text-[9px]" style={{ color: "var(--text-mute)" }}>
+            trained {lstm.trained_at.slice(0, 10)}
+          </div>
+        )}
+        {lstm.status === "not_trained" && (
+          <div className="mono text-[9px]" style={{ color: "var(--text-mute)" }}>
+            Run <span style={{ color: "var(--amber)" }}>make train-lstm</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ScenarioHistoryTable() {
+  const [data, setData] = useState(null);
+  const [err,  setErr]  = useState(false);
+
+  useEffect(() => {
+    API.get("/api/history/scenarios")
+      .then(d => setData(d.scenarios || []))
+      .catch(() => setErr(true));
+  }, []);
+
+  if (err) return (
+    <div className="mono text-[9px] px-4 pb-3" style={{ color: "var(--text-mute)" }}>
+      DB unavailable — start TimescaleDB to see ingested history
+    </div>
+  );
+  if (!data) return (
+    <div className="mono text-[9px] px-4 pb-2" style={{ color: "var(--text-mute)" }}>
+      Loading...
+    </div>
+  );
+  if (data.length === 0) return (
+    <div className="mono text-[9px] px-4 pb-3" style={{ color: "var(--text-mute)" }}>
+      No scenarios ingested — run <span style={{ color: "var(--amber)" }}>make demo</span>
+    </div>
+  );
+
+  return (
+    <div className="px-4 pb-3">
+      <table className="w-full">
+        <thead>
+          <tr>
+            {["SCENARIO", "SAMPLES", "DATE"].map(h => (
+              <th key={h} className="mono text-[9px] tracking-widest text-left pb-1"
+                  style={{ color: "var(--text-mute)" }}>{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((s, i) => (
+            <tr key={i} style={{ borderTop: "1px solid var(--border)" }}>
+              <td className="mono text-[10px] py-1" style={{ color: "var(--text-hi)" }}>
+                {s.name}
+              </td>
+              <td className="mono text-[10px] py-1" style={{ color: "var(--text)" }}>
+                {s.n_samples?.toLocaleString() ?? "—"}
+              </td>
+              <td className="mono text-[10px] py-1" style={{ color: "var(--text-dim)" }}>
+                {s.ingested_at ? s.ingested_at.slice(0, 10) : "—"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function RecentDecisionsTable() {
+  const [data, setData] = useState(null);
+  const [err,  setErr]  = useState(false);
+
+  useEffect(() => {
+    API.get("/api/history/decisions?limit=8")
+      .then(d => setData(d.data || []))
+      .catch(() => setErr(true));
+  }, []);
+
+  const decisionColor = d =>
+    d === "accepted" ? "var(--green)" :
+    d === "rejected" ? "var(--signal-red)" : "var(--amber)";
+
+  if (err) return (
+    <div className="mono text-[9px] px-4 pb-3" style={{ color: "var(--text-mute)" }}>
+      DB unavailable
+    </div>
+  );
+  if (!data) return (
+    <div className="mono text-[9px] px-4 pb-2" style={{ color: "var(--text-mute)" }}>
+      Loading...
+    </div>
+  );
+  if (data.length === 0) return (
+    <div className="mono text-[9px] px-4 pb-3" style={{ color: "var(--text-mute)" }}>
+      No decisions recorded yet
+    </div>
+  );
+
+  return (
+    <div className="px-4 pb-3">
+      <table className="w-full">
+        <thead>
+          <tr>
+            {["DECISION", "SCENARIO", "TIME"].map(h => (
+              <th key={h} className="mono text-[9px] tracking-widest text-left pb-1"
+                  style={{ color: "var(--text-mute)" }}>{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((d, i) => (
+            <tr key={i} style={{ borderTop: "1px solid var(--border)" }}>
+              <td className="mono text-[10px] py-1 pr-2"
+                  style={{ color: decisionColor(d.decision) }}>
+                {(d.decision || "").toUpperCase()}
+              </td>
+              <td className="mono text-[10px] py-1 pr-2" style={{ color: "var(--text)" }}>
+                {d.scenario || "—"}
+              </td>
+              <td className="mono text-[10px] py-1" style={{ color: "var(--text-dim)" }}>
+                {d.decided_at ? d.decided_at.slice(0, 16).replace("T", " ") : "—"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function OperatorOutcomesTable() {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchOutcomes = () => {
+      API.get("/api/outcomes/operator?limit=8")
+        .then(r => { if (!cancelled) setData(r.outcomes || []); })
+        .catch(() => { if (!cancelled) setData([]); });
+    };
+    fetchOutcomes();
+    const id = setInterval(fetchOutcomes, 15000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, []);
+
+  const qualityColor = q =>
+    q == null ? "var(--text-mute)" :
+    q >= 0.75 ? "var(--green)"     :
+    q >= 0.50 ? "var(--amber)"     :
+                "var(--signal-red)";
+
+  if (!data) return (
+    <div className="mono text-[9px] px-4 pb-2" style={{ color: "var(--text-mute)" }}>
+      Loading...
+    </div>
+  );
+  if (data.length === 0) return (
+    <div className="mono text-[9px] px-4 pb-3" style={{ color: "var(--text-mute)" }}>
+      No outcomes measured yet — accept a recommendation and wait 30 min sim time
+    </div>
+  );
+
+  return (
+    <div className="px-4 pb-3">
+      <table className="w-full">
+        <thead>
+          <tr>
+            {["RULE", "QUALITY", "DELAY", "MEASURED"].map(h => (
+              <th key={h} className="mono text-[9px] tracking-widest text-left pb-1"
+                  style={{ color: "var(--text-mute)" }}>{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((o, i) => (
+            <tr key={o.outcome_id || i} style={{ borderTop: "1px solid var(--border)" }}>
+              <td className="mono text-[10px] py-1 pr-2" style={{ color: "var(--text)" }}>
+                {o.rule_fired || "—"}
+              </td>
+              <td className="mono text-[10px] py-1 pr-2"
+                  style={{ color: qualityColor(o.quality_score) }}>
+                {o.quality_score == null ? "—"
+                                         : `${(o.quality_score * 100).toFixed(0)}%`}
+              </td>
+              <td className="mono text-[10px] py-1 pr-2" style={{ color: "var(--text-dim)" }}>
+                {o.measurement_delay_min ? `${o.measurement_delay_min.toFixed(0)}m` : "—"}
+              </td>
+              <td className="mono text-[10px] py-1" style={{ color: "var(--text-dim)" }}>
+                {o.measured_at ? o.measured_at.slice(0, 16).replace("T", " ") : "—"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+
+function ModelHistoryPanel() {
+  return (
+    <div className="h-full flex flex-col overflow-y-auto scroll-clean"
+         style={{ background: "var(--bg-panel)" }}>
+
+      {/* Models section */}
+      <div className="px-5 py-3" style={{ borderBottom: "1px solid var(--border)" }}>
+        <div className="mono text-[10px] uppercase tracking-widest mb-2"
+             style={{ color: "var(--text-mute)" }}>▸ Deployed Models</div>
+        <ModelStatusCard />
+      </div>
+
+      {/* Ingested Scenarios */}
+      <div className="px-5 py-3" style={{ borderBottom: "1px solid var(--border)" }}>
+        <div className="mono text-[10px] uppercase tracking-widest mb-2"
+             style={{ color: "var(--text-mute)" }}>▸ Ingested Scenarios</div>
+        <ScenarioHistoryTable />
+      </div>
+
+      {/* Recent Decisions */}
+      <div className="px-5 py-3" style={{ borderBottom: "1px solid var(--border)" }}>
+        <div className="mono text-[10px] uppercase tracking-widest mb-2"
+             style={{ color: "var(--text-mute)" }}>▸ Recent Operator Decisions</div>
+        <RecentDecisionsTable />
+      </div>
+
+      {/* Operator Outcomes — closes the loop on UI decisions */}
+      <div className="px-5 py-3">
+        <div className="mono text-[10px] uppercase tracking-widest mb-2"
+             style={{ color: "var(--text-mute)" }}>▸ Operator Outcomes (predicted vs actual)</div>
+        <OperatorOutcomesTable />
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Optimization Panel — Pareto front of operating points
+// ============================================================================
+function OptimizationPanel() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const load = useCallback(async (refresh = false) => {
+    if (refresh) setRefreshing(true);
+    else setLoading(true);
+    try {
+      const d = await API.get(`/api/optimization/pareto${refresh ? "?refresh=true" : ""}`);
+      setData(d);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => { load(false); }, [load]);
+
+  if (loading) {
+    return (
+      <div className="h-full flex items-center justify-center"
+           style={{ background: "var(--bg-panel)" }}>
+        <div className="mono text-[10px] tracking-widest"
+             style={{ color: "var(--cyan)" }}>
+          ▸ COMPUTING PARETO FRONT...
+        </div>
+      </div>
+    );
+  }
+
+  if (!data || !data.available) {
+    return (
+      <div className="h-full flex items-center justify-center"
+           style={{ background: "var(--bg-panel)" }}>
+        <div className="mono text-[10px]" style={{ color: "var(--text-mute)" }}>
+          Optimizer unavailable
+        </div>
+      </div>
+    );
+  }
+
+  const front   = data.front || [];
+  const nominal = data.nominal;
+  const current = data.current;
+
+  // Build chart data: purity (x) vs Q_reb (y), color by production
+  const chartData = front.map(p => ({
+    purity: p.kpis["column.purity_B"],
+    energy: p.kpis["column.Q_reb_kW"],
+    production: p.objectives.production,
+    rr: p.inputs["column.RR"],
+    fcool: p.inputs["cstr.F_cool"],
+    ffeed: p.inputs["cstr.F_feed"],
+  })).sort((a, b) => a.purity - b.purity);
+
+  return (
+    <div className="h-full flex flex-col scroll-clean overflow-y-auto"
+         style={{ background: "var(--bg-panel)" }}>
+
+      <div className="px-5 py-4 bezel-b" style={{ borderTop: `2px solid var(--magenta)` }}>
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="mono text-[10px] uppercase tracking-widest"
+                 style={{ color: "var(--text-mute)" }}>
+              ▸ Multi-Objective Optimization
+            </div>
+            <div className="display text-sm font-medium mt-0.5" style={{ color: "var(--text-hi)" }}>
+              PARETO FRONT · {front.length} OPERATING POINTS
+            </div>
+          </div>
+          <button
+            onClick={() => load(true)}
+            disabled={refreshing}
+            className="mono text-[10px] tracking-widest px-3 py-1.5 transition border"
+            style={{ borderColor: "var(--magenta)",
+                     color: "var(--magenta)",
+                     opacity: refreshing ? 0.5 : 1 }}
+          >
+            {refreshing ? "..." : "↻ RECOMPUTE"}
+          </button>
+        </div>
+      </div>
+
+      {/* Pareto chart: purity vs energy */}
+      <div className="px-5 py-4 bezel-b">
+        <div className="mono text-[10px] uppercase tracking-widest mb-2"
+             style={{ color: "var(--magenta)" }}>
+          ▸ Purity vs Energy trade-off
+        </div>
+        <div style={{ height: 260, background: "var(--bg-deep)",
+                      border: "1px solid var(--border)" }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData}
+                       margin={{ top: 12, right: 16, left: 8, bottom: 4 }}>
+              <CartesianGrid stroke="var(--grid)" strokeDasharray="2 4" />
+              <XAxis dataKey="purity" type="number" domain={["dataMin", "dataMax"]}
+                     tick={{ fill: "var(--text-mute)", fontSize: 10 }}
+                     stroke="var(--border-hi)"
+                     tickFormatter={(v) => v.toFixed(1)}
+                     label={{ value: "Purity B [%]", position: "bottom",
+                              fill: "var(--text-mute)", fontSize: 10, offset: -2 }} />
+              <YAxis tick={{ fill: "var(--text-mute)", fontSize: 10 }}
+                     stroke="var(--border-hi)" width={42}
+                     tickFormatter={(v) => v.toFixed(0)}
+                     label={{ value: "Q_reb [kW]", angle: -90, position: "insideLeft",
+                              fill: "var(--text-mute)", fontSize: 10 }} />
+              <Tooltip
+                contentStyle={{ background: "var(--bg-elev-2)",
+                                border: "1px solid var(--border-hi)",
+                                fontSize: 11, fontFamily: "JetBrains Mono",
+                                color: "var(--text-hi)" }}
+                formatter={(value, name) => {
+                  if (name === "energy") return [value.toFixed(1) + " kW", "Q_reb"];
+                  return [value.toFixed(2), name];
+                }}
+                labelFormatter={(v) => `Purity ${v.toFixed(2)}%`}
+              />
+              <Line type="monotone" dataKey="energy" name="energy"
+                    stroke="var(--magenta)" strokeWidth={1.5}
+                    dot={{ fill: "var(--magenta)", r: 2.5 }}
+                    isAnimationActive={false} />
+              <ReferenceLine x={98.5} stroke="var(--signal-red)"
+                             strokeDasharray="3 3"
+                             label={{ value: "spec", fill: "var(--signal-red)",
+                                      fontSize: 9 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="flex items-center justify-between mt-2 mono text-[9px]"
+             style={{ color: "var(--text-mute)" }}>
+          <span>← lower energy</span>
+          <span>higher purity →</span>
+        </div>
+      </div>
+
+      {/* Current vs nominal vs best Pareto point */}
+      <div className="px-5 py-4 bezel-b">
+        <div className="mono text-[10px] uppercase tracking-widest mb-3"
+             style={{ color: "var(--magenta)" }}>
+          ▸ Current operation vs Pareto-optimal
+        </div>
+        <ComparisonTable current={current} nominal={nominal} front={front} />
+      </div>
+
+      {/* Decision variables traversed along the front */}
+      <div className="px-5 py-4">
+        <div className="mono text-[10px] uppercase tracking-widest mb-2"
+             style={{ color: "var(--magenta)" }}>
+          ▸ Setpoint trajectory along the front
+        </div>
+        <div style={{ height: 180, background: "var(--bg-deep)",
+                      border: "1px solid var(--border)" }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData}
+                       margin={{ top: 8, right: 12, left: 4, bottom: 4 }}>
+              <CartesianGrid stroke="var(--grid)" strokeDasharray="2 4" />
+              <XAxis dataKey="purity" type="number" domain={["dataMin", "dataMax"]}
+                     tick={{ fill: "var(--text-mute)", fontSize: 10 }}
+                     stroke="var(--border-hi)"
+                     tickFormatter={(v) => v.toFixed(1)} />
+              <YAxis tick={{ fill: "var(--text-mute)", fontSize: 10 }}
+                     stroke="var(--border-hi)" width={32} />
+              <Tooltip
+                contentStyle={{ background: "var(--bg-elev-2)",
+                                border: "1px solid var(--border-hi)",
+                                fontSize: 10, fontFamily: "JetBrains Mono",
+                                color: "var(--text-hi)" }}
+              />
+              <Line type="monotone" dataKey="rr" name="RR"
+                    stroke="#4dd2ff" strokeWidth={1.2} dot={false} isAnimationActive={false} />
+              <Line type="monotone" dataKey="ffeed" name="F_feed"
+                    stroke="#ffb547" strokeWidth={1.2} dot={false} isAnimationActive={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ComparisonTable({ current, nominal, front }) {
+  // Find a representative "Pareto-suggested" point: highest purity that is
+  // achievable with energy ≤ current
+  if (!current || !front.length) return null;
+  const currEnergy = current.kpis["column.Q_reb_kW"];
+  const candidates = front.filter(p => p.kpis["column.Q_reb_kW"] <= currEnergy * 1.05);
+  const suggested = candidates.length > 0
+    ? candidates.reduce((best, p) =>
+        p.kpis["column.purity_B"] > best.kpis["column.purity_B"] ? p : best
+      )
+    : front[front.length - 1];
+
+  const Row = ({ label, value, units, color }) => (
+    <div className="flex items-baseline justify-between py-1.5">
+      <span className="mono text-[10px] uppercase tracking-widest"
+            style={{ color: "var(--text-mute)" }}>
+        {label}
+      </span>
+      <span className="num-callout text-sm" style={{ color: color || "var(--text-hi)" }}>
+        {typeof value === "number" ? value.toFixed(2) : value}
+        <span className="mono text-[9px] ml-1" style={{ color: "var(--text-mute)" }}>
+          {units}
+        </span>
+      </span>
+    </div>
+  );
+
+  const purityDelta = suggested.kpis["column.purity_B"] - current.kpis["column.purity_B"];
+  const energyDelta = suggested.kpis["column.Q_reb_kW"] - current.kpis["column.Q_reb_kW"];
+
+  return (
+    <div className="grid grid-cols-2 gap-px" style={{ background: "var(--border)" }}>
+      <div className="p-3" style={{ background: "var(--bg-elev)" }}>
+        <div className="mono text-[10px] tracking-widest font-bold mb-2"
+             style={{ color: "var(--cyan)" }}>
+          CURRENT
+        </div>
+        <Row label="Purity B" value={current.kpis["column.purity_B"]} units="%" />
+        <Row label="Q_reb"    value={current.kpis["column.Q_reb_kW"]} units="kW" />
+        <Row label="RR"       value={current.inputs["column.RR"]} units="" />
+        <Row label="F_cool"   value={current.inputs["cstr.F_cool"]} units="m³/h" />
+      </div>
+      <div className="p-3" style={{ background: "var(--bg-elev-2)" }}>
+        <div className="mono text-[10px] tracking-widest font-bold mb-2"
+             style={{ color: "var(--magenta)" }}>
+          PARETO-SUGGESTED
+        </div>
+        <Row label="Purity B" value={suggested.kpis["column.purity_B"]} units="%"
+             color={purityDelta > 0 ? "var(--green)" : "var(--text-hi)"} />
+        <Row label="Q_reb"    value={suggested.kpis["column.Q_reb_kW"]} units="kW"
+             color={energyDelta < 0 ? "var(--green)" : "var(--text-hi)"} />
+        <Row label="RR"       value={suggested.inputs["column.RR"]} units=""
+             color="var(--magenta)" />
+        <Row label="F_cool"   value={suggested.inputs["cstr.F_cool"]} units="m³/h"
+             color="var(--magenta)" />
+      </div>
+
+      <div className="col-span-2 p-3" style={{ background: "var(--bg-elev)" }}>
+        <div className="mono text-[10px] tracking-widest font-bold mb-1"
+             style={{ color: "var(--text-mute)" }}>
+          DELTA · MOVING TO SUGGESTED OPERATION
+        </div>
+        <div className="flex items-center gap-4 mt-1">
+          <span className="mono text-xs"
+                style={{ color: purityDelta >= 0 ? "var(--green)" : "var(--signal-red)" }}>
+            purity {purityDelta >= 0 ? "+" : ""}{purityDelta.toFixed(2)}%
+          </span>
+          <span className="mono text-xs"
+                style={{ color: energyDelta <= 0 ? "var(--green)" : "var(--amber)" }}>
+            Q_reb {energyDelta >= 0 ? "+" : ""}{energyDelta.toFixed(1)} kW
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Root App
+// ============================================================================
+function App() {
+  const [liveSample, setLiveSample]   = useState(null);
+  const [replayStatus, setReplayStatus] = useState(null);
+  const [scenarios, setScenarios]     = useState(null);
+  const [recommendations, setRecs]    = useState([]);
+  const [selectedRec, setSelectedRec] = useState(null);
+  const [rightTab, setRightTab]       = useState("optimization");
+
+  // Initial fetches
+  useEffect(() => {
+    API.get("/api/scenarios").then(setScenarios).catch(() => {});
+  }, []);
+
+  // Periodic replay status
+  const [rs] = useSWR("/api/replay/status", 1000);
+  useEffect(() => { if (rs) setReplayStatus(rs); }, [rs]);
+
+  // Periodic recommendations refresh
+  const refreshRecs = useCallback(async () => {
+    try {
+      const d = await API.get("/api/recommendations?limit=80");
+      setRecs(d.recommendations);
+      // Keep selection in sync if updated
+      if (selectedRec) {
+        const updated = d.recommendations.find(r => r.id === selectedRec.id);
+        if (updated) setSelectedRec(updated);
+      }
+    } catch {}
+  }, [selectedRec]);
+
+  useEffect(() => {
+    refreshRecs();
+    const id = setInterval(refreshRecs, 2000);
+    return () => clearInterval(id);
+  }, [refreshRecs]);
+
+  // WebSocket for real-time pushes (live sample + new events)
+  const { connected } = useWebSocket((msg) => {
+    if (msg.type === "tick" || msg.type === "snapshot") {
+      if (msg.sample) setLiveSample(msg.sample);
+    }
+    if (msg.type === "tick" && msg.new_events) {
+      const incoming = msg.new_events.recommendations || [];
+      if (incoming.length > 0) refreshRecs();
+    }
+    if (msg.type === "scenario_changed") {
+      setSelectedRec(null);
+      refreshRecs();
+    }
+    if (msg.type === "decision_recorded") {
+      refreshRecs();
+    }
+  });
+
+  // Initial state
+  useEffect(() => {
+    API.get("/api/state").then(setLiveSample).catch(() => {});
+  }, []);
+
+  // Handlers
+  const onScenarioChange = useCallback(async (s) => {
+    await API.post("/api/scenarios/select", { scenario: s });
+    setSelectedRec(null);
+    refreshRecs();
+  }, [refreshRecs]);
+
+  const onReplayControl = useCallback(async (payload) => {
+    await API.post("/api/replay/control", payload);
+  }, []);
+
+  const onScenarioUploaded = useCallback(async () => {
+    // After upload, refresh the scenario list and the recs panel.
+    // The server already activated the new scenario and broadcast scenario_changed.
+    try {
+      const list = await API.get("/api/scenarios");
+      setScenarios(list);
+    } catch {}
+    setSelectedRec(null);
+    refreshRecs();
+  }, [refreshRecs]);
+
+  const onDecide = useCallback(async (rec, action) => {
+    let justification = "";
+    if (action === "modify") {
+      justification = window.prompt("Justification for modification (optional):") || "Modified by operator";
+    } else if (action === "reject") {
+      justification = window.prompt("Reason for rejection (optional):") || "Rejected by operator";
+    } else {
+      justification = "Approved by operator";
+    }
+    await API.post(`/api/recommendations/${rec.id}/decide`, { action, justification });
+    refreshRecs();
+  }, [refreshRecs]);
+
+  return (
+    <div className="h-full flex flex-col">
+      <TopBar
+        replayStatus={replayStatus}
+        scenarios={scenarios}
+        onScenarioChange={onScenarioChange}
+        onScenarioUploaded={onScenarioUploaded}
+        onReplayControl={onReplayControl}
+        connected={connected}
+      />
+      <main className="flex-1 grid overflow-hidden"
+            style={{ gridTemplateColumns: "minmax(380px, 28%) 1fr minmax(380px, 30%)" }}>
+        <ProcessPanel liveSample={liveSample} />
+        <RecommendationsPanel
+          recommendations={recommendations}
+          selected={selectedRec}
+          onSelect={setSelectedRec}
+          onDecide={onDecide}
+        />
+        {selectedRec ? (
+          <RecommendationDetail rec={selectedRec} onDecide={onDecide} />
+        ) : (
+          <div className="h-full flex flex-col" style={{ background: "var(--bg-panel)" }}>
+            {/* Tab bar */}
+            <div className="flex shrink-0" style={{ borderBottom: "1px solid var(--border)" }}>
+              {[
+                { id: "optimization", label: "OPTIMIZATION",    color: "var(--magenta)" },
+                { id: "history",      label: "HISTORY & MODELS", color: "var(--cyan)"   },
+              ].map(t => {
+                const active = rightTab === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => setRightTab(t.id)}
+                    className="mono text-[9px] tracking-widest px-4 py-2.5 transition-all"
+                    style={{
+                      color:       active ? t.color : "var(--text-mute)",
+                      borderBottom: active ? `2px solid ${t.color}` : "2px solid transparent",
+                      background:  "transparent",
+                      border:      "none",
+                      borderBottom: active ? `2px solid ${t.color}` : "2px solid transparent",
+                      cursor:      "pointer",
+                    }}
+                  >
+                    {t.label}
+                  </button>
+                );
+              })}
+            </div>
+            {/* Panel content */}
+            <div className="flex-1 overflow-hidden">
+              {rightTab === "optimization"
+                ? <OptimizationPanel />
+                : <ModelHistoryPanel />
+              }
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

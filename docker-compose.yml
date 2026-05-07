@@ -1,0 +1,91 @@
+services:
+
+  # ── TimescaleDB ─────────────────────────────────────────────────────────
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-axion}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-axion}
+      POSTGRES_DB: ${POSTGRES_DB:-axion}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-axion} -d ${POSTGRES_DB:-axion}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── DB migration runner (one-shot, gates the API on a fresh schema) ────
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: axion-api:latest
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+    environment:
+      AXION_DB_URL: postgresql://${POSTGRES_USER:-axion}:${POSTGRES_PASSWORD:-axion}@timescaledb:5432/${POSTGRES_DB:-axion}
+    command: ["python", "-m", "alembic", "-c", "db/alembic.ini", "upgrade", "head"]
+    restart: "no"
+
+  # ── MLflow tracking server ──────────────────────────────────────────────
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.16.2
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlruns:/mlruns
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri sqlite:////mlruns/mlflow.db
+      --default-artifact-root /mlruns
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/').close()"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # ── Axion API ────────────────────────────────────────────────────────────
+  axion-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: axion-api:latest
+    restart: unless-stopped
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+      mlflow:
+        condition: service_started
+    ports:
+      - "8000:8000"
+    environment:
+      AXION_DB_URL: postgresql://${POSTGRES_USER:-axion}:${POSTGRES_PASSWORD:-axion}@timescaledb:5432/${POSTGRES_DB:-axion}
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      AXION_API_KEY: ${AXION_API_KEY:-}
+      AXION_API_KEY_VIEWER: ${AXION_API_KEY_VIEWER:-}
+      AXION_API_KEY_OPERATOR: ${AXION_API_KEY_OPERATOR:-}
+      AXION_API_KEY_MANAGER: ${AXION_API_KEY_MANAGER:-}
+      AXION_JWT_SECRET: ${AXION_JWT_SECRET:-}
+      AXION_RATE_LIMIT_PER_MIN: ${AXION_RATE_LIMIT_PER_MIN:-120}
+      AXION_PROCESS_PROFILE: ${AXION_PROCESS_PROFILE:-pilot}
+      AXION_OPCUA_ENABLED: ${AXION_OPCUA_ENABLED:-false}
+      AXION_WEBHOOK_URL: ${AXION_WEBHOOK_URL:-}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/api/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  pgdata:
+  mlruns:
